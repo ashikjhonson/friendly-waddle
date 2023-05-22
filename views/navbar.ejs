@@ -1,44 +1,81 @@
-<!-- All most complete navabar, Color theme must be changed -->
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Friendly Waddle</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-</head>
-<body>
-    <nav class="navbar sticky-top bg-body-tertiary">
-        <div class="container-fluid justify-content-around">
-          <a class="navbar-brand mx-5 px-3" href="/">Friendly Waddle</a>
-          
-          <ul class="navbar nav px-5 mx-5 flex-fill d-flex justify-content-around">
-            <li class="nav-item">
-              <a class="navbar-brand" href="/"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="skyblue" class="bi bi-house-door-fill " viewBox="0 0 16 16">
-                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5Z"/>
-            </svg></a>
-            </li>
-            <li class="nav-item">
-              <a class="navbar-brand" href="/ask"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="28" fill="skyblue" class="bi bi-chat-left-text-fill" viewBox="0 0 16 16">
-                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793V2zm3.5 1a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1h-9zm0 2.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5z"/>
-              </svg></a>
-            </li>
-            <li class="nav-item">
-              <a class="navbar-brand" href="/answer"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="skyblue" class="bi bi-vector-pen" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828L10.646.646zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
-                <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086.086-.026z"/>
-              </svg></a>
-            </li>
-          </ul>
-          <form class="d-flex my-2 " role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-          <a class="navbar mx-5 px-3" href="/profile"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-          </svg></a>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Friendly Waddle</title>
+  </head>
+  <body>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+    <nav class="navbar navbar-expand-md  navbar-light border-bottom px-2 px-sm-5 py-2 py-sm-1 py-md-0">
+        <div class="container">
+          <a class="navbar-brand logo" href="/"><span class="text-main-color fw-bold fs-3">Friendly Waddle</span></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <div class="container">
+              <ul class="navbar-nav grid gap-5">
+              <li class="nav-item">
+                <a class="nav-link border-main-color" title="Home" aria-current="page" href="/">
+                    <svg class="text-main-color" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 90 960 960"><path d="M220 876h150V626h220v250h150V486L480 291 220 486v390Zm-60 60V456l320-240 320 240v480H530V686H430v250H160Zm320-353Z"/></svg>
+                    <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Home</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" title="Ask Question" aria-current="page" href="/ask-question">                    
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" viewBox="0 90 960 960" ><path d="M480 1016q-112 0-216-66T100 799v137H40V696h240v60H143q51 77 145.5 138.5T480 956q78 0 147.5-30t121-81.5Q800 793 830 723.5T860 576h60q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q112 0 216 66t164 151V216h60v240H680v-60h137q-51-77-145-138.5T480 196q-78 0-147.5 30t-121 81.5Q160 359 130 428.5T100 576H40Zm437 234q16 0 27-11t11-27q0-16-11-27t-27-11q-16 0-27 11t-11 27q0 16 11 27t27 11Zm-33-148h57q0-31 10-50.5t35-44.5q33-33 46-58.5t13-53.5q0-52-36-83.5T479 340q-49 0-86 23.5T338 432l53 22q13-26 36-41.5t52-15.5q29 0 49 16t20 44q0 20-11 38.5T500 539q-37 35-46.5 60t-9.5 63Z"/></svg> -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 50 930 900" fill="currentColor"><path d="M80 776V218q0-14 13-28t27-14h519q15 0 28 13.5t13 28.5v356q0 14-13 28t-28 14H240L80 776Zm201 40q-14 0-27.5-14T240 774v-98h500V336h100q14 0 27 14t13 29v596L721 816H281Zm339-580H140v395l75-75h405V236Zm-480 0v395-395Z"/></svg>                                                                
+                    <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Ask Questions</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" title="Give Answers" aria-current="page" href="/give-answers">
+                  <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-vector-pen" viewBox="0 -3 19 19">
+                    <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828L10.646.646zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
+                    <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086.086-.026z"/>
+                  </svg>
+                    <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Answer Questions</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" title="Users" aria-current="page" href="/following">
+                    <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor"viewBox="0 90 960 960" ><path d="m150 656 82-80-82-82-80 82 80 80Zm573-10 87-140 88 140H723Zm-243-70q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600 456q0 50-34.5 85T480 576Zm.351-180Q455 396 437.5 413.149t-17.5 42.5Q420 481 437.351 498.5t43 17.5Q506 516 523 498.649t17-43Q540 430 522.851 413t-42.5-17ZM480 456ZM0 816v-53q0-39.464 42-63.232T150.398 676q12.158 0 23.38.5T196 678.727q-8 17.273-12 34.842-4 17.57-4 37.431v65H0Zm240 0v-65q0-65 66.5-105T480 606q108 0 174 40t66 105v65H240Zm570-140q67.5 0 108.75 23.768T960 763v53H780v-65q0-19.861-3.5-37.431Q773 696 765 678.727q11-1.727 22.171-2.227 11.172-.5 22.829-.5Zm-330.2-10Q400 666 350 690q-50 24-50 61v5h360v-6q0-36-49.5-60t-130.7-24Zm.2 90Z"/></svg>
+                    <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Following</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" title="Notifications" aria-current="page" href="/notifications">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 36 990 990"><path d="M160 856v-60h84V490q0-84 49.5-149.5T424 258v-29q0-23 16.5-38t39.5-15q23 0 39.5 15t16.5 38v29q81 17 131 82.5T717 490v306h83v60H160Zm320-295Zm0 415q-32 0-56-23.5T400 896h160q0 33-23.5 56.5T480 976ZM304 796h353V490q0-74-51-126t-125-52q-74 0-125.5 52T304 490v306Z"/></svg>
+                    <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Notifications</span>
+                </a>
+              </li>
+              </ul>
+          </div>    
+
+            <div class="container my-3 d-md-none d-lg-block ">
+              <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-primary" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="25" fill="currentColor" viewBox="0 96 960 960" width="25"><path d="M796 935 533 672q-30 26-69.959 40.5T378 727q-108.162 0-183.081-75Q120 577 120 471t75-181q75-75 181.5-75t181 75Q632 365 632 471.15 632 514 618 554q-14 40-42 75l264 262-44 44ZM377 667q81.25 0 138.125-57.5T572 471q0-81-56.875-138.5T377 275q-82.083 0-139.542 57.5Q180 390 180 471t57.458 138.5Q294.917 667 377 667Z"/></svg>
+                </button>
+              </form>            
+            </div>
+            <div class="user-icon mb-3 pt-2">              
+                <svg xmlns="http://www.w3.org/2000/svg" fill="grey" viewBox="0 80 930 900" width="45"><path d="M222 801q63-44 125-67.5T480 710q71 0 133.5 23.5T739 801q44-54 62.5-109T820 576q0-145-97.5-242.5T480 236q-145 0-242.5 97.5T140 576q0 61 19 116t63 109Zm257.814-195Q422 606 382.5 566.314q-39.5-39.686-39.5-97.5t39.686-97.314q39.686-39.5 97.5-39.5t97.314 39.686q39.5 39.686 39.5 97.5T577.314 566.5q-39.686 39.5-97.5 39.5Zm.654 370Q398 976 325 944.5q-73-31.5-127.5-86t-86-127.266Q80 658.468 80 575.734T111.5 420.5q31.5-72.5 86-127t127.266-86q72.766-31.5 155.5-31.5T635.5 207.5q72.5 31.5 127 86t86 127.032q31.5 72.532 31.5 155T848.5 731q-31.5 73-86 127.5t-127.032 86q-72.532 31.5-155 31.5ZM480 916q55 0 107.5-16T691 844q-51-36-104-55t-107-19q-54 0-107 19t-104 55q51 40 103.5 56T480 916Zm0-370q34 0 55.5-21.5T557 469q0-34-21.5-55.5T480 392q-34 0-55.5 21.5T403 469q0 34 21.5 55.5T480 546Zm0-77Zm0 374Z"/></svg>
+                <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Profile</span>
+          </div>
+          </div>
         </div>
-      </nav>
+        
+    </nav>
