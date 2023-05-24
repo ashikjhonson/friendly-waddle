@@ -16,25 +16,25 @@
                 <p class="col-lg-10 fs-4">Where the written word reigns supreme.</p>
             </div>
             <div class="col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-4 border rounded-3 bg-light">
+                <form class="p-4 p-md-4 border rounded-3 bg-light" method="post">
                 <div class="text-center pb-3"><h3 style="color: #005EB8;">Sign Up</h3></div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput" placeholder="What would you like to be called?">
+                    <input type="text" class="form-control" id="floatingInputName" placeholder="What would you like to be called?" name="name" required>
                     <label for="floatingInput">Name</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email" required>
                     <label for="floatingInput">Email address</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                    <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" required>
                     <label for="floatingPassword">Password</label>
                 </div>
-                <div class="checkbox mb-3">
+                <!-- <div class="checkbox mb-3">
                     <label>
                     <input type="checkbox" value="remember-me"> Remember me
                     </label>
-                </div>
+                </div> -->
                 <div class="d-grid gap-2 ">
                     <button class="btn btn-primary" type="submit">Sign up</button>
                     <a href="/login" class="mx-auto"><button type="button" class="btn btn-light w-60 mx-auto">Existing user? Login</button></a>                    

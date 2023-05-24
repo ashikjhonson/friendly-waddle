@@ -7,9 +7,10 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    
     <link rel="stylesheet" href="style.css">
 
-    <title>Friendly Waddle</title>
+    <title>Friendly Waddle</title>    
   </head>
   <body>
 
@@ -25,7 +26,7 @@
           </button>
           <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <div class="container">
-              <ul class="navbar-nav grid gap-5">
+              <ul class="navbar-nav grid gap-0 gap-md-5">
               <li class="nav-item">
                 <a class="nav-link border-main-color" title="Home" aria-current="page" href="/">
                     <svg class="text-main-color" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 90 960 960"><path d="M220 876h150V626h220v250h150V486L480 291 220 486v390Zm-60 60V456l320-240 320 240v480H530V686H430v250H160Zm320-353Z"/></svg>
@@ -33,14 +34,14 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" title="Ask Question" aria-current="page" href="/ask-question">                    
+                <a class="nav-link" title="Ask Question" aria-current="page" href="/ask">                    
                     <!-- <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" viewBox="0 90 960 960" ><path d="M480 1016q-112 0-216-66T100 799v137H40V696h240v60H143q51 77 145.5 138.5T480 956q78 0 147.5-30t121-81.5Q800 793 830 723.5T860 576h60q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q112 0 216 66t164 151V216h60v240H680v-60h137q-51-77-145-138.5T480 196q-78 0-147.5 30t-121 81.5Q160 359 130 428.5T100 576H40Zm437 234q16 0 27-11t11-27q0-16-11-27t-27-11q-16 0-27 11t-11 27q0 16 11 27t27 11Zm-33-148h57q0-31 10-50.5t35-44.5q33-33 46-58.5t13-53.5q0-52-36-83.5T479 340q-49 0-86 23.5T338 432l53 22q13-26 36-41.5t52-15.5q29 0 49 16t20 44q0 20-11 38.5T500 539q-37 35-46.5 60t-9.5 63Z"/></svg> -->
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 50 930 900" fill="currentColor"><path d="M80 776V218q0-14 13-28t27-14h519q15 0 28 13.5t13 28.5v356q0 14-13 28t-28 14H240L80 776Zm201 40q-14 0-27.5-14T240 774v-98h500V336h100q14 0 27 14t13 29v596L721 816H281Zm339-580H140v395l75-75h405V236Zm-480 0v395-395Z"/></svg>                                                                
                     <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Ask Questions</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" title="Give Answers" aria-current="page" href="/give-answers">
+                <a class="nav-link" title="Give Answers" aria-current="page" href="/answer">
                   <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-vector-pen" viewBox="0 -3 19 19">
                     <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828L10.646.646zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
                     <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086.086-.026z"/>
@@ -73,7 +74,9 @@
             </div>
             <div class="user-icon mb-3 pt-2">              
                 <svg xmlns="http://www.w3.org/2000/svg" fill="grey" viewBox="0 80 930 900" width="45"><path d="M222 801q63-44 125-67.5T480 710q71 0 133.5 23.5T739 801q44-54 62.5-109T820 576q0-145-97.5-242.5T480 236q-145 0-242.5 97.5T140 576q0 61 19 116t63 109Zm257.814-195Q422 606 382.5 566.314q-39.5-39.686-39.5-97.5t39.686-97.314q39.686-39.5 97.5-39.5t97.314 39.686q39.5 39.686 39.5 97.5T577.314 566.5q-39.686 39.5-97.5 39.5Zm.654 370Q398 976 325 944.5q-73-31.5-127.5-86t-86-127.266Q80 658.468 80 575.734T111.5 420.5q31.5-72.5 86-127t127.266-86q72.766-31.5 155.5-31.5T635.5 207.5q72.5 31.5 127 86t86 127.032q31.5 72.532 31.5 155T848.5 731q-31.5 73-86 127.5t-127.032 86q-72.532 31.5-155 31.5ZM480 916q55 0 107.5-16T691 844q-51-36-104-55t-107-19q-54 0-107 19t-104 55q51 40 103.5 56T480 916Zm0-370q34 0 55.5-21.5T557 469q0-34-21.5-55.5T480 392q-34 0-55.5 21.5T403 469q0 34 21.5 55.5T480 546Zm0-77Zm0 374Z"/></svg>
-                <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Profile</span>
+                <% if(session) {%>
+                <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 "><%= session.name %></span>
+                <% } %>
           </div>
           </div>
         </div>

@@ -58,8 +58,7 @@
 }
 
 .hover-dark:hover{
-    background-color: rgb(184, 176, 176);
-    
+    background-color: #d0d0d0;    
     border-radius: 15px;
     transition: .2s;
 }
@@ -80,3 +79,8 @@ a{
     display: none;
 }
 
+
+.btn:focus,.btn:active {
+    outline: none !important;
+    box-shadow: none;
+ }
