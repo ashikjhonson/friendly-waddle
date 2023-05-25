@@ -1,32 +1,25 @@
 <%- include('navbar'); -%>
 
-<!-- 
-  // const qid = document.getElementById('qstn');
-  // qid.addEventListener('click', (event)=>{
-  //   console.log('event');
-  // }) -->
-<!-- <% function recieve(){ %>
-<%     console.log('Recieving'); %>  
-<% } %> -->
-
-<!--To continue: Add eventlistener to identify question selected-->
-
-<div class="container mt-4">
-  <h2 class="d-flex align-items-center justify-content-center mx-auto">Questions for you</h2>
-  <div class="d-flex flex-column col-12 col-lg-8 flex-md-row p-4 gap-4 py-md-3 align-items-center justify-content-center mx-auto">
-    <form id="qstn">
-      <div class="list-group list-group-radio d-grid gap-2 border-0">
-        <% questionsArray.forEach(q => { %>        
-        <div class="position-relative">
-          <input class="form-check-input position-absolute top-50 end-0 me-3 fs-5" type="radio" name="listGroupRadioGrid">
-          <label class="list-group-item list-group-item-primary py-3 pe-5" for="listGroupRadioGrid1">
-            <input class="form-check-input me-1" type="radio" name="listGroupRadio" id='<%= q.q_id %>' for="<%= q.q_id %>">
-            <strong class="fw-semibold"><%= q.question %></strong>          
-          </label>
-        </div>        
-        <% }) %>
-      </div>
-      <button type="submit" class="btn btn-primary d-flex mx-auto mt-3">Answer</button>
-    </form>
+<div class="bg-light pt-4">
+  <div class="container mt-4">
+    <h2 class="d-flex align-items-center justify-content-center mx-auto">Questions for you</h2>
+    <div class="d-flex flex-column col-12 col-lg-8 flex-md-row p-4 gap-4 py-md-3 align-items-center justify-content-center mx-auto">
+      <form id="qstn" method="post">
+        <div class="list-group list-group-radio d-grid gap-2 border-0">
+          <% questionsArray.forEach(q => { %>        
+          <div class="position-relative">            
+            <label class="list-group-item list-group-item-primary py-3 pe-5 rounded-2" for="<%= q.q_id %>">
+              <input class="form-check-input me-1" type="radio" name="listGroupRadio" id='<%= q.q_id %>' value='<%= q.q_id %>'>
+              <strong class="fw-semibold"><%= q.question %></strong>                      
+            </label>
+          </div>        
+          <% }) %>
+        </div>
+        <button type="submit" class="btn btn-primary d-flex mx-auto mt-3">Answer</button>
+      </form>
+    </div>
   </div>
 </div>
+
+</body>
+</html>

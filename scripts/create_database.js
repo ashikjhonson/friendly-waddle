@@ -27,7 +27,9 @@ CREATE TABLE IF NOT EXISTS ${process.env.DB_DATABASE}.questions (
   question TEXT NOT NULL,
   u_id INT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (u_id) REFERENCES users(u_id));`;
+  answered INT NOT NULL DEFAULT 0,
+  FOREIGN KEY (u_id) REFERENCES users(u_id)
+);`;
   conn.query(questionsTable);
 
 console.log('Completed');

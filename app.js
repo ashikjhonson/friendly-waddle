@@ -177,6 +177,15 @@ app.get('/answer', isAuthenticated, (req, res)=>{
         res.render('questions', {questionsArray: result, session: req.session}); 
     });    
 });
+app.post('/answer', (req, res)=>{
+    const selectedQuestionId = req.body.listGroupRadio;
+    console.log("Selected question ID:", selectedQuestionId);
+    res.redirect('/answer');
+})  
+
+/**
+ * To do: write routes for new-post
+ */
 
 app.get('*', (req, res) => {
     res.status(404).render('404', {session: req.session});
