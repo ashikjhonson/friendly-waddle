@@ -37,9 +37,7 @@ conn.connect((err)=>{
 
 
 // variables
-const trending = [];
 const usersArray = [];
-const questionsArray = [];
 
 // verify user
 const isAuthenticated = async (req, res, next)=>{
@@ -57,12 +55,6 @@ const isNotAuthenticated = async (req, res, next)=>{
     else    
         res.redirect('/');
 }
-
-// Trending section
-// let sql = 'SELECT * FROM TRENDING';
-// conn.query(sql, function(err, result){            
-//     trending.push(...result);    
-// }); 
 
 // Fetching Users
 function fetchUsers(){
@@ -82,6 +74,7 @@ app.get('/', isAuthenticated,(req, res)=>{
     });     
 });
 
+
 app.get('/login', isNotAuthenticated, (req, res)=>{
     res.render('login');
 });
@@ -99,6 +92,7 @@ app.post('/login', (req, res)=>{
                     req.session.loggedIn = true;
                     req.session.name = found[0].Name;
                     req.session.email = found[0].Email;
+                    req.session.u_id = found[0].u_id;
                     res.redirect('/')
                     console.log('Logged in...');
                 }
@@ -117,6 +111,7 @@ app.post('/login', (req, res)=>{
         }
     })
 })
+
 
 app.get('/register', isNotAuthenticated, (req, res)=>{
     res.render('register');
@@ -142,9 +137,15 @@ app.post('/register', async (req, res)=>{
                     sql = 'INSERT INTO users(Name, Email, Password) VALUES (?,?,?)';
                     conn.query(sql, [user.name, user.email, user.password], (err, data)=>{
                         if(!err){
-                            req.session.loggedIn = true;
+                            req.session.loggedIn = true;                            
                             req.session.name = user.name;
                             req.session.email = user.email; 
+
+                            conn.query('SELECT u_id FROM users WHERE email=?', [user.email], (err, result)=>{
+                                if(result){
+                                    req.session.u_id = result[0].u_id;
+                                }
+                            })
                             console.log('User registered...');
                         }
                     })                       
@@ -166,8 +167,24 @@ app.get('/logout', isAuthenticated, (req, res)=>{
 })
 
 
-app.get('/ask', isAuthenticated, (req, res)=>{
-    res.render('ask', {session: req.session});
+app.get('/ask', isAuthenticated, (req, res)=>{    
+    res.render('ask', {session: req.session})
+})
+app.post('/ask', (req, res)=>{    
+    let question = req.body.question;     
+    if(question){
+        try{
+            let sql = 'INSERT INTO questions (question, u_id, name) VALUES(?,?,?)';            
+            conn.query(sql, [question, req.session.u_id, req.session.name]);
+            console.log('Question added');
+            res.redirect('/');
+        } catch{
+            console.log('Error');
+        }
+    }    
+    else{
+        res.redirect('/ask')
+    }
 });
 
 
@@ -177,19 +194,53 @@ app.get('/answer', isAuthenticated, (req, res)=>{
         res.render('questions', {questionsArray: result, session: req.session}); 
     });    
 });
-app.post('/answer', (req, res)=>{
+app.post('/answer', isAuthenticated,(req, res)=>{
     const selectedQuestionId = req.body.listGroupRadio;
-    console.log("Selected question ID:", selectedQuestionId);
-    res.redirect('/answer');
+    req.session.q_id = selectedQuestionId;
+    res.redirect('/new-post');
 })  
 
-/**
- * To do: write routes for new-post
- */
 
-app.get('*', (req, res) => {
+app.get('/new-post', isAuthenticated, (req, res)=>{
+    let sql = 'SELECT question FROM questions WHERE q_id=?';
+    try{
+        conn.query(sql,[req.session.q_id], (err, qstn)=>{
+            if(qstn[0]){                
+                let question = qstn[0].question;
+                req.session.question = question;
+                res.render('new-post', {session: req.session, question: question});
+            }
+            else{
+                res.redirect('/');
+            }
+        })
+    }
+    catch(e){
+        console.log(e);
+    }    
+})
+app.post('/new-post', isAuthenticated, (req, res)=>{
+    let sql = 'INSERT INTO posts(question, answer, u_id, q_id, name) VALUES (?,?,?,?,?)';
+    conn.query(sql, [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name], (err, result)=>{
+        if(!err){
+            console.log('Posted successfully');
+            delete req.session.question;
+            delete req.session.q_id;
+
+            res.redirect('/');
+        }
+        else{
+            console.log("Couldn't post");
+            res.redirect('/new-post');
+        }
+    })
+    
+})
+
+
+app.get('*', isAuthenticated, (req, res) => {
     res.status(404).render('404', {session: req.session});
   });
 
-  app.listen(port);
-  console.log('The magic happens on port ' + port);
+app.listen(port);
+console.log('The magic happens on port ' + port);
