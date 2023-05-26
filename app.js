@@ -122,15 +122,25 @@ app.get('/answer', isAuthenticated, async (req, res)=>{
 });
 app.post('/answer', isAuthenticated,(req, res)=>{
     req.session.q_id = req.body.listGroupRadio;    
-    res.redirect('/new-post');
+    if(req.session.q_id){
+        res.redirect('/new-post');
+    }
+    else{
+        res.redirect('/answer');
+    }
 })  
 
 
 app.get('/new-post', isAuthenticated, async (req, res)=>{    
     try{
-        const qn = await executeInsertQuery('SELECT question FROM questions WHERE q_id=?',[req.session.q_id]); // not a insert query here        
-        req.session.question = qn[0].question;        
-        res.render('new-post', {session: req.session});
+        if(req.session.q_id){
+            const qn = await executeInsertQuery('SELECT question FROM questions WHERE q_id=?',[req.session.q_id]);
+            req.session.question = qn[0].question;        
+            res.render('new-post', {session: req.session});
+        }
+        else{
+            res.redirect('/');
+        }
     }
     catch(e){
         console.log(e);
