@@ -83,12 +83,94 @@ app.get('/', isAuthenticated, async (req, res)=>{
     try{
         const trending = await executeQuery('SELECT * FROM trending');
         const posts = await executeQuery('SELECT * FROM posts ORDER BY created_at DESC LIMIT 10');
+        req.session.active = 'home';
         res.render('index', {trending: trending, posts: posts, session: req.session});
     }
     catch{
         res.status(500).send('Error');
     }    
 });
+
+
+
+
+app.get('/ask', isAuthenticated, (req, res)=>{    
+    req.session.active = 'ask';
+    res.render('ask', {session: req.session})
+})
+app.post('/ask', (req, res)=>{    
+    let question = req.body.question;     
+    if(question){
+        try{                        
+            executeInsertQuery('INSERT INTO questions (question, u_id, name) VALUES(?,?,?)', [question, req.session.u_id, req.session.name]);
+            console.log('Question added');
+            res.redirect('/');
+        } catch{
+            console.log('Error');
+        }
+    }    
+    else{
+        res.redirect('/ask')
+    }
+});
+
+
+app.get('/answer', isAuthenticated, async (req, res)=>{
+    const questions = await executeQuery('SELECT * FROM questions ORDER BY answered, created_at LIMIT 4');
+    req.session.active = 'answer';
+    res.render('questions', {questions: questions, session: req.session});    
+});
+app.post('/answer', isAuthenticated,(req, res)=>{
+    req.session.q_id = req.body.listGroupRadio;    
+    res.redirect('/new-post');
+})  
+
+
+app.get('/new-post', isAuthenticated, (req, res)=>{    
+    try{
+        conn.query('SELECT question FROM questions WHERE q_id=?',[req.session.q_id], (err, qstn)=>{
+            if(qstn[0]){                
+                let question = qstn[0].question;
+                req.session.question = question;
+                res.render('new-post', {session: req.session, question: question});
+            }
+            else{
+                res.redirect('/');
+            }
+        })
+    }
+    catch(e){
+        console.log(e);
+    }    
+})
+app.post('/new-post', isAuthenticated, (req, res)=>{
+    let query = 'INSERT INTO posts(question, answer, u_id, q_id, name) VALUES (?,?,?,?,?)';
+    executeInsertQuery(query, [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name])
+    .then(async  ()=>{        
+        await executeInsertQuery('UPDATE questions SET answered=? WHERE q_id=?',[1, req.session.q_id]);
+        console.log('Posted successfully');
+        delete req.session.question;
+        delete req.session.q_id;
+        res.redirect('/');
+    })
+    .catch( err=>{
+        console.log("Couldn't post");
+        console.log(err);
+        res.redirect('/new-post');
+    })  
+})
+
+app.get('/following', isAuthenticated, (req, res)=>{
+    req.session.active = 'following';
+    res.render('404', {session: req.session});
+})
+
+
+app.get('/notifications', isAuthenticated, (req, res)=>{
+    req.session.active = 'notifications';
+    res.render('404', {session: req.session});
+})
+
 
 /**To do: update existing sql queries with function in login and register routes*/
 app.get('/login', isNotAuthenticated, (req, res)=>{
@@ -109,8 +191,8 @@ app.post('/login', (req, res)=>{
                     req.session.name = found[0].Name;
                     req.session.email = found[0].Email;
                     req.session.u_id = found[0].u_id;
-                    res.redirect('/')
                     console.log('Logged in...');
+                    res.redirect('/')
                 }
                 else{
                     console.log('Incorrect password...');
@@ -183,75 +265,9 @@ app.get('/logout', isAuthenticated, (req, res)=>{
 })
 
 
-app.get('/ask', isAuthenticated, (req, res)=>{    
-    res.render('ask', {session: req.session})
-})
-app.post('/ask', (req, res)=>{    
-    let question = req.body.question;     
-    if(question){
-        try{                        
-            executeInsertQuery('INSERT INTO questions (question, u_id, name) VALUES(?,?,?)', [question, req.session.u_id, req.session.name]);
-            console.log('Question added');
-            res.redirect('/');
-        } catch{
-            console.log('Error');
-        }
-    }    
-    else{
-        res.redirect('/ask')
-    }
-});
-
-
-app.get('/answer', isAuthenticated, async (req, res)=>{
-    const questions = await executeQuery('SELECT * FROM questions ORDER BY answered, created_at LIMIT 4');
-    res.render('questions', {questions: questions, session: req.session});    
-});
-app.post('/answer', isAuthenticated,(req, res)=>{
-    req.session.q_id = req.body.listGroupRadio;    
-    res.redirect('/new-post');
-})  
-
-
-app.get('/new-post', isAuthenticated, (req, res)=>{
-    let sql = 'SELECT question FROM questions WHERE q_id=?';
-    try{
-        conn.query(sql,[req.session.q_id], (err, qstn)=>{
-            if(qstn[0]){                
-                let question = qstn[0].question;
-                req.session.question = question;
-                res.render('new-post', {session: req.session, question: question});
-            }
-            else{
-                res.redirect('/');
-            }
-        })
-    }
-    catch(e){
-        console.log(e);
-    }    
-})
-app.post('/new-post', isAuthenticated, (req, res)=>{
-    let query = 'INSERT INTO posts(question, answer, u_id, q_id, name) VALUES (?,?,?,?,?)';
-    executeInsertQuery(query, [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name])
-    .then(async  ()=>{        
-        await executeInsertQuery('UPDATE questions SET answered=? WHERE q_id=?',[1, req.session.q_id]);
-        console.log('Posted successfully');
-        delete req.session.question;
-        delete req.session.q_id;
-        res.redirect('/');
-    })
-    .catch( err=>{
-        console.log("Couldn't post");
-        console.log(err);
-        res.redirect('/new-post');
-    })  
-})
-
-
 app.get('*', isAuthenticated, (req, res) => {
     res.status(404).render('404', {session: req.session});
-  });
+});
 
 app.listen(port);
 console.log('The magic happens on port ' + port);

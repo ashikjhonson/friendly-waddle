@@ -28,21 +28,20 @@
             <div class="container">
               <ul class="navbar-nav grid gap-0 gap-md-5">
               <li class="nav-item">
-                <a class="nav-link border-main-color" title="Home" aria-current="page" href="/">
-                    <svg class="text-main-color" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 90 960 960"><path d="M220 876h150V626h220v250h150V486L480 291 220 486v390Zm-60 60V456l320-240 320 240v480H530V686H430v250H160Zm320-353Z"/></svg>
+                <a title="Home" aria-current="page" href="/" class="nav-link <%= session.active==='home'?'active':'' %>">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="<%= session.active==='home'?'#b92b27':'currentColor' %>" viewBox="0 90 960 960"><path d="M220 876h150V626h220v250h150V486L480 291 220 486v390Zm-60 60V456l320-240 320 240v480H530V686H430v250H160Zm320-353Z"/></svg>
                     <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Home</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" title="Ask Question" aria-current="page" href="/ask">                    
-                    <!-- <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" viewBox="0 90 960 960" ><path d="M480 1016q-112 0-216-66T100 799v137H40V696h240v60H143q51 77 145.5 138.5T480 956q78 0 147.5-30t121-81.5Q800 793 830 723.5T860 576h60q0 91-34.5 171T791 887q-60 60-140 94.5T480 1016ZM40 576q0-91 34.5-171T169 265q60-60 140-94.5T480 136q112 0 216 66t164 151V216h60v240H680v-60h137q-51-77-145-138.5T480 196q-78 0-147.5 30t-121 81.5Q160 359 130 428.5T100 576H40Zm437 234q16 0 27-11t11-27q0-16-11-27t-27-11q-16 0-27 11t-11 27q0 16 11 27t27 11Zm-33-148h57q0-31 10-50.5t35-44.5q33-33 46-58.5t13-53.5q0-52-36-83.5T479 340q-49 0-86 23.5T338 432l53 22q13-26 36-41.5t52-15.5q29 0 49 16t20 44q0 20-11 38.5T500 539q-37 35-46.5 60t-9.5 63Z"/></svg> -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 50 930 900" fill="currentColor"><path d="M80 776V218q0-14 13-28t27-14h519q15 0 28 13.5t13 28.5v356q0 14-13 28t-28 14H240L80 776Zm201 40q-14 0-27.5-14T240 774v-98h500V336h100q14 0 27 14t13 29v596L721 816H281Zm339-580H140v395l75-75h405V236Zm-480 0v395-395Z"/></svg>                                                                
+                <a title="Ask Question" aria-current="page" href="/ask" class="nav-link <%= session.active==='ask'?'active':'' %>">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 50 930 900" fill="<%= session.active==='ask'?'#b92b27':'currentColor' %>"><path d="M80 776V218q0-14 13-28t27-14h519q15 0 28 13.5t13 28.5v356q0 14-13 28t-28 14H240L80 776Zm201 40q-14 0-27.5-14T240 774v-98h500V336h100q14 0 27 14t13 29v596L721 816H281Zm339-580H140v395l75-75h405V236Zm-480 0v395-395Z"/></svg>                                                                
                     <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Ask Questions</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" title="Give Answers" aria-current="page" href="/answer">
-                  <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-vector-pen" viewBox="0 -3 19 19">
+                <a title="Give Answers" aria-current="page" href="/answer" class="nav-link <%= session.active==='answer'?'active':'' %>">
+                  <svg xmlns="http://www.w3.org/2000/svg"  fill="<%= session.active==='answer'?'#b92b27':'currentColor' %>" class="ms-1"  viewBox="0 -3 17 19">
                     <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828L10.646.646zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
                     <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086.086-.026z"/>
                   </svg>
@@ -50,14 +49,14 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" title="Users" aria-current="page" href="/following">
-                    <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor"viewBox="0 90 960 960" ><path d="m150 656 82-80-82-82-80 82 80 80Zm573-10 87-140 88 140H723Zm-243-70q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600 456q0 50-34.5 85T480 576Zm.351-180Q455 396 437.5 413.149t-17.5 42.5Q420 481 437.351 498.5t43 17.5Q506 516 523 498.649t17-43Q540 430 522.851 413t-42.5-17ZM480 456ZM0 816v-53q0-39.464 42-63.232T150.398 676q12.158 0 23.38.5T196 678.727q-8 17.273-12 34.842-4 17.57-4 37.431v65H0Zm240 0v-65q0-65 66.5-105T480 606q108 0 174 40t66 105v65H240Zm570-140q67.5 0 108.75 23.768T960 763v53H780v-65q0-19.861-3.5-37.431Q773 696 765 678.727q11-1.727 22.171-2.227 11.172-.5 22.829-.5Zm-330.2-10Q400 666 350 690q-50 24-50 61v5h360v-6q0-36-49.5-60t-130.7-24Zm.2 90Z"/></svg>
+                <a title="Users" aria-current="page" href="/following" class="nav-link <%= session.active==='following'?'active':'' %>">
+                    <svg xmlns="http://www.w3.org/2000/svg"  fill="<%= session.active==='following'?'#b92b27':'currentColor' %>" viewBox="0 90 960 960" ><path d="m150 656 82-80-82-82-80 82 80 80Zm573-10 87-140 88 140H723Zm-243-70q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600 456q0 50-34.5 85T480 576Zm.351-180Q455 396 437.5 413.149t-17.5 42.5Q420 481 437.351 498.5t43 17.5Q506 516 523 498.649t17-43Q540 430 522.851 413t-42.5-17ZM480 456ZM0 816v-53q0-39.464 42-63.232T150.398 676q12.158 0 23.38.5T196 678.727q-8 17.273-12 34.842-4 17.57-4 37.431v65H0Zm240 0v-65q0-65 66.5-105T480 606q108 0 174 40t66 105v65H240Zm570-140q67.5 0 108.75 23.768T960 763v53H780v-65q0-19.861-3.5-37.431Q773 696 765 678.727q11-1.727 22.171-2.227 11.172-.5 22.829-.5Zm-330.2-10Q400 666 350 690q-50 24-50 61v5h360v-6q0-36-49.5-60t-130.7-24Zm.2 90Z"/></svg>
                     <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Following</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" title="Notifications" aria-current="page" href="/notifications">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 36 990 990"><path d="M160 856v-60h84V490q0-84 49.5-149.5T424 258v-29q0-23 16.5-38t39.5-15q23 0 39.5 15t16.5 38v29q81 17 131 82.5T717 490v306h83v60H160Zm320-295Zm0 415q-32 0-56-23.5T400 896h160q0 33-23.5 56.5T480 976ZM304 796h353V490q0-74-51-126t-125-52q-74 0-125.5 52T304 490v306Z"/></svg>
+                <a title="Notifications" aria-current="page" href="/notifications" class="nav-link <%= session.active==='notifications'?'active':'' %>">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="<%= session.active==='notifications'?'#b92b27':'currentColor' %>" viewBox="0 36 990 990"><path d="M160 856v-60h84V490q0-84 49.5-149.5T424 258v-29q0-23 16.5-38t39.5-15q23 0 39.5 15t16.5 38v29q81 17 131 82.5T717 490v306h83v60H160Zm320-295Zm0 415q-32 0-56-23.5T400 896h160q0 33-23.5 56.5T480 976ZM304 796h353V490q0-74-51-126t-125-52q-74 0-125.5 52T304 490v306Z"/></svg>
                     <span class="d-inline-block d-md-none fw-bold mx-3 mt-4 ">Notifications</span>
                 </a>
               </li>
