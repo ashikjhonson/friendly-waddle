@@ -126,21 +126,15 @@ app.post('/answer', isAuthenticated,(req, res)=>{
 })  
 
 
-app.get('/new-post', isAuthenticated, (req, res)=>{    
+app.get('/new-post', isAuthenticated, async (req, res)=>{    
     try{
-        conn.query('SELECT question FROM questions WHERE q_id=?',[req.session.q_id], (err, qstn)=>{
-            if(qstn[0]){                
-                let question = qstn[0].question;
-                req.session.question = question;
-                res.render('new-post', {session: req.session, question: question});
-            }
-            else{
-                res.redirect('/');
-            }
-        })
+        const qn = await executeInsertQuery('SELECT question FROM questions WHERE q_id=?',[req.session.q_id]); // not a insert query here        
+        req.session.question = qn[0].question;        
+        res.render('new-post', {session: req.session});
     }
     catch(e){
         console.log(e);
+        res.redirect('/');
     }    
 })
 app.post('/new-post', isAuthenticated, (req, res)=>{
@@ -155,7 +149,6 @@ app.post('/new-post', isAuthenticated, (req, res)=>{
     })
     .catch( err=>{
         console.log("Couldn't post");
-        console.log(err);
         res.redirect('/new-post');
     })  
 })
@@ -176,38 +169,34 @@ app.get('/notifications', isAuthenticated, (req, res)=>{
 app.get('/login', isNotAuthenticated, (req, res)=>{
     res.render('login');
 });
-app.post('/login', (req, res)=>{
+app.post('/login', async (req, res)=>{
     const loginEmail = req.body.email;
     const loginPassword = req.body.password;
-
-    let sql = 'SELECT * FROM users WHERE Email=?';
-    conn.query(sql, [loginEmail], async (err, found)=>{        
-
-        // Found someone
-        if(found[0]){            
-            try{                
-                if(await bcrypt.compare(loginPassword, found[0].Password)){
-                    req.session.loggedIn = true;
-                    req.session.name = found[0].Name;
-                    req.session.email = found[0].Email;
-                    req.session.u_id = found[0].u_id;
-                    console.log('Logged in...');
-                    res.redirect('/')
-                }
-                else{
-                    console.log('Incorrect password...');
-                    res.redirect('/login');
-                }
-            } catch(e){
-                console.log(e);
+    const found = await executeInsertQuery('SELECT * FROM users WHERE Email=?', [loginEmail]);
+    if(found[0]){            
+        try{                
+            if(await bcrypt.compare(loginPassword, found[0].Password)){
+                req.session.loggedIn = true;
+                req.session.name = found[0].Name;
+                req.session.email = found[0].Email;
+                req.session.u_id = found[0].u_id;
+                console.log('Logged in...');
+                res.redirect('/')
+            }
+            else{
+                console.log('Incorrect password...');
                 res.redirect('/login');
             }
-        }
-        else{
-            console.log('User not found...'); //no user found
+        } 
+        catch(e){
+            console.log(e);
             res.redirect('/login');
         }
-    })
+    }
+    else{
+        console.log('User not found...'); //no user found
+        res.redirect('/login');
+    }
 })
 
 
@@ -222,35 +211,22 @@ app.post('/register', async (req, res)=>{
             email: req.body.email,
             password: hashedPassword
         }
-
-        let sql = "SELECT Email FROM users WHERE Email=?";
-        conn.query(sql, [user.email], (err, result)=>{
-            if(!err){
-                if(result[0]){
-                    console.log('User exists...');
-                    res.redirect('/register');
-                }
-                else{
-                    // registering user        
-                    sql = 'INSERT INTO users(Name, Email, Password) VALUES (?,?,?)';
-                    conn.query(sql, [user.name, user.email, user.password], (err, data)=>{
-                        if(!err){
-                            req.session.loggedIn = true;                            
-                            req.session.name = user.name;
-                            req.session.email = user.email; 
-
-                            conn.query('SELECT u_id FROM users WHERE email=?', [user.email], (err, result)=>{
-                                if(result){
-                                    req.session.u_id = result[0].u_id;
-                                }
-                            })
-                            console.log('User registered...');
-                        }
-                    })                       
-                    res.redirect('/');
-                }
-            }
-        })                    
+        const result = await executeInsertQuery("SELECT Email FROM users WHERE Email=?", [user.email]);
+        if(result[0]){
+            console.log('User exists...');
+            res.redirect('/register');
+        }
+        else{
+            // registering user        
+            await executeInsertQuery('INSERT INTO users(Name, Email, Password) VALUES (?,?,?)', [user.name, user.email, user.password]);
+            req.session.loggedIn = true;                            
+            req.session.name = user.name;
+            req.session.email = user.email; 
+            const result = await executeInsertQuery('SELECT u_id FROM users WHERE email=?', [user.email]);
+            req.session.u_id = result[0].u_id;
+            console.log('User registered...');                     
+            res.redirect('/');
+        }                  
     } catch(e){
         console.log(e);
         res.redirect('/register');
