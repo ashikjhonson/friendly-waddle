@@ -3,12 +3,12 @@
 <%- include('navbar'); -%>
 
 <div class="bg-light pt-4">
-  <div class="container">
+  <div class="container vh-100">
     <h2 class="d-flex align-items-center justify-content-center mx-auto">Questions for you</h2>
     <div class="d-flex flex-column col-12 col-lg-8 flex-md-row p-4 gap-4 py-md-3 align-items-center justify-content-center mx-auto">
       <form id="qstn" method="post">
         <div class="list-group list-group-radio d-grid gap-2 border-0">
-          <% questionsArray.forEach(q => { %>        
+          <% questions.forEach(q => { %>        
           <div class="position-relative">            
             <label class="list-group-item list-group-item-primary py-3 pe-5 rounded-2" for="<%= q.q_id %>">
               <input class="form-check-input me-1" type="radio" name="listGroupRadio" id='<%= q.q_id %>' value='<%= q.q_id %>'>

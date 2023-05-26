@@ -35,10 +35,6 @@ conn.connect((err)=>{
     else console.log('Connected to database...');    
 })
 
-
-// variables
-const usersArray = [];
-
 // verify user
 const isAuthenticated = async (req, res, next)=>{
     if(req.session.loggedIn){        
@@ -56,25 +52,45 @@ const isNotAuthenticated = async (req, res, next)=>{
         res.redirect('/');
 }
 
-// Fetching Users
-function fetchUsers(){
-    sql = 'SELECT Name FROM users';
-    conn.query(sql, function(err, result){
-        usersArray.push(...result);         
+// execute queries
+const executeQuery = (query) => {
+    return new Promise((resolve, reject) => {
+      conn.query(query, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
     });
-}
-fetchUsers();
+  };
+
+const executeInsertQuery = (query, values) => {
+    return new Promise((resolve, reject) => {
+        conn.query(query, values, (err, res) => {
+        if (err) {
+            reject(err);
+        } else {
+            resolve(res);
+        }
+        });
+    });
+};
 
 
 // Routes
-app.get('/', isAuthenticated,(req, res)=>{      
-    let sql = 'SELECT * FROM TRENDING';
-    conn.query(sql, function(err, result){            
-        res.render('index', {trending: result, usersArray: usersArray, session: req.session}); //trending.push(...result);    
-    });     
+app.get('/', isAuthenticated, async (req, res)=>{          
+    try{
+        const trending = await executeQuery('SELECT * FROM trending');
+        const posts = await executeQuery('SELECT * FROM posts ORDER BY created_at DESC LIMIT 10');
+        res.render('index', {trending: trending, posts: posts, session: req.session});
+    }
+    catch{
+        res.status(500).send('Error');
+    }    
 });
 
-
+/**To do: update existing sql queries with function in login and register routes*/
 app.get('/login', isNotAuthenticated, (req, res)=>{
     res.render('login');
 });
@@ -173,9 +189,8 @@ app.get('/ask', isAuthenticated, (req, res)=>{
 app.post('/ask', (req, res)=>{    
     let question = req.body.question;     
     if(question){
-        try{
-            let sql = 'INSERT INTO questions (question, u_id, name) VALUES(?,?,?)';            
-            conn.query(sql, [question, req.session.u_id, req.session.name]);
+        try{                        
+            executeInsertQuery('INSERT INTO questions (question, u_id, name) VALUES(?,?,?)', [question, req.session.u_id, req.session.name]);
             console.log('Question added');
             res.redirect('/');
         } catch{
@@ -188,15 +203,12 @@ app.post('/ask', (req, res)=>{
 });
 
 
-app.get('/answer', isAuthenticated, (req, res)=>{
-    sql = 'SELECT * FROM questions';
-    conn.query(sql, function(err, result){
-        res.render('questions', {questionsArray: result, session: req.session}); 
-    });    
+app.get('/answer', isAuthenticated, async (req, res)=>{
+    const questions = await executeQuery('SELECT * FROM questions ORDER BY answered, created_at LIMIT 4');
+    res.render('questions', {questions: questions, session: req.session});    
 });
 app.post('/answer', isAuthenticated,(req, res)=>{
-    const selectedQuestionId = req.body.listGroupRadio;
-    req.session.q_id = selectedQuestionId;
+    req.session.q_id = req.body.listGroupRadio;    
     res.redirect('/new-post');
 })  
 
@@ -220,21 +232,20 @@ app.get('/new-post', isAuthenticated, (req, res)=>{
     }    
 })
 app.post('/new-post', isAuthenticated, (req, res)=>{
-    let sql = 'INSERT INTO posts(question, answer, u_id, q_id, name) VALUES (?,?,?,?,?)';
-    conn.query(sql, [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name], (err, result)=>{
-        if(!err){
-            console.log('Posted successfully');
-            delete req.session.question;
-            delete req.session.q_id;
-
-            res.redirect('/');
-        }
-        else{
-            console.log("Couldn't post");
-            res.redirect('/new-post');
-        }
+    let query = 'INSERT INTO posts(question, answer, u_id, q_id, name) VALUES (?,?,?,?,?)';
+    executeInsertQuery(query, [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name])
+    .then(async  ()=>{        
+        await executeInsertQuery('UPDATE questions SET answered=? WHERE q_id=?',[1, req.session.q_id]);
+        console.log('Posted successfully');
+        delete req.session.question;
+        delete req.session.q_id;
+        res.redirect('/');
     })
-    
+    .catch( err=>{
+        console.log("Couldn't post");
+        console.log(err);
+        res.redirect('/new-post');
+    })  
 })
 
 
