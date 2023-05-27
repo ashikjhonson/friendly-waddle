@@ -174,8 +174,47 @@ app.get('/notifications', isAuthenticated, (req, res)=>{
     res.render('404', {session: req.session});
 })
 
+app.get('/profile', isAuthenticated, async (req, res)=>{
+    req.session.active = '';
+    const user = await executeInsertQuery('SELECT Name, Email, About, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM users WHERE u_id=?', [req.session.u_id]);
+    const questions = await executeInsertQuery('SELECT q_id, question, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM questions WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
+    const posts = await executeInsertQuery('SELECT p_id, question, answer, q_id, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM posts WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
 
-/**To do: update existing sql queries with function in login and register routes*/
+    res.render('profile', {session: req.session, user: user[0], questions: questions, posts: posts});
+})
+
+
+app.post('/update-profile', isAuthenticated, async(req, res)=>{
+    await executeInsertQuery('UPDATE posts SET name=?, About=? WHERE u_id=?',[req.body.name, req.body.about, req.session.u_id]);
+    await executeInsertQuery('UPDATE questions SET name=? WHERE u_id=?',[req.body.name, req.session.u_id]);
+    await executeInsertQuery('UPDATE users SET Name=?, About=? WHERE Email=?', [req.body.name, req.body.about, req.body.email]);
+    console.log('Updated');
+    res.redirect('/profile');
+})
+
+
+app.get('/delete-question/:q_id/:u_id', isAuthenticated, async(req, res)=>{
+    if(req.params.u_id==req.session.u_id){
+        await executeInsertQuery('DELETE FROM posts WHERE q_id=?',[req.params.q_id]);
+        await executeInsertQuery('DELETE FROM questions WHERE q_id=?',[req.params.q_id]);
+        console.log('Deleted question');
+        res.redirect('/profile');
+    }else{
+        res.redirect('/');
+    }
+})
+
+app.get('/delete-post/:p_id/:u_id', isAuthenticated, async(req, res)=>{
+    if(req.params.u_id==req.session.u_id){
+        await executeInsertQuery('DELETE FROM posts WHERE p_id=?',[req.params.p_id]);
+        console.log('Deleted post');
+        res.redirect('/profile');
+    }else{
+        res.redirect('/');
+    }
+})
+
+// Modified route to profile instead of home here
 app.get('/login', isNotAuthenticated, (req, res)=>{
     res.render('login');
 });
@@ -191,7 +230,7 @@ app.post('/login', async (req, res)=>{
                 req.session.email = found[0].Email;
                 req.session.u_id = found[0].u_id;
                 console.log('Logged in...');
-                res.redirect('/')
+                res.redirect('/profile')
             }
             else{
                 console.log('Incorrect password...');
