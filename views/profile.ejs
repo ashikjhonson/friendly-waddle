@@ -85,7 +85,7 @@
                                 <button class="btn ps-0"><%=post.Date%></button>      
                               <h5 class="card-title text-truncate mw-75"><%=post.question%></h5>
                               <p class="text-truncate mw-75"><%=post.answer%></p>
-                              <a href="#" class="btn btn-primary">View post</a>
+                              <a href="/posts-view-post-<%= post.p_id %>" class="btn btn-primary">View post</a>
                               <a href="/delete-post/<%=post.p_id%>/<%=session.u_id%>" class="btn btn-danger">Delete post</a>
                             </div>
                         </div>

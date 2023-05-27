@@ -163,6 +163,7 @@ app.post('/new-post', isAuthenticated, async (req, res)=>{
     })  
 })
 
+
 app.get('/following', isAuthenticated, (req, res)=>{
     req.session.active = 'following';
     res.render('404', {session: req.session});
@@ -181,6 +182,12 @@ app.get('/profile', isAuthenticated, async (req, res)=>{
     const posts = await executeInsertQuery('SELECT p_id, question, answer, q_id, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM posts WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
 
     res.render('profile', {session: req.session, user: user[0], questions: questions, posts: posts});
+})
+
+
+app.get('/posts-view-post-:pid', async (req, res)=>{
+    const post = await executeInsertQuery('SELECT * FROM posts WHERE p_id=?',[req.params.pid]);        
+    res.render('post', {session: req.session, post: post[0]})
 })
 
 
@@ -267,7 +274,7 @@ app.post('/register', async (req, res)=>{
         }
         else{
             // registering user        
-            await executeInsertQuery('INSERT INTO users(Name, Email, Password) VALUES (?,?,?)', [user.name, user.email, user.password]);
+            await executeInsertQuery('INSERT INTO users(Name, Email, Password, About) VALUES (?,?,?,?)', [user.name, user.email, user.password, 'Anonymous']);
             req.session.loggedIn = true;                            
             req.session.name = user.name;
             req.session.email = user.email; 
