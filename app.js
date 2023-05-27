@@ -171,7 +171,7 @@ app.get('/following', isAuthenticated, (req, res)=>{
 
 app.get('/notifications', isAuthenticated, (req, res)=>{
     req.session.active = 'notifications';
-    res.render('404', {session: req.session});
+    res.render('notifications', {session: req.session});
 })
 
 app.get('/profile', isAuthenticated, async (req, res)=>{
