@@ -90,3 +90,37 @@ a{
     outline: none !important;
     box-shadow: none;
  }
+
+ .box {
+    background-color: white;
+    border-radius: 5px;
+    padding: 7px;
+    padding-top: 30px; 
+    position: relative;
+    margin-bottom: 0px; 
+    border: 0.5px solid darkgrey;
+    padding: 10px;
+    padding-bottom: 20px;
+    font-family: Crete Round;
+    font-size: large;
+  }
+  .box:hover{
+        border: 2px solid blue;
+
+  }
+  .date {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #888;
+  }
+  
+  @media (max-width: 768px) {
+    .date {
+      position: relative;
+      top: 0;
+      right: 0;
+      margin-bottom: 10px; /* Add some space below the date */
+    }
+  }

@@ -1,0 +1,98 @@
+<%- include('navbar'); -%>
+<div class="pt-4">
+    <div class="container">  
+        <h3 class="text-center mb-3">Your Profile</h3>
+        <div class="card bg-light w-50 mb-3 border border-dark p-2 text-start custom-card mx-auto">
+            <div class="row">
+              <div class="col-md-4">
+                <img src="/assets/male.svg" class="mt-5 ms-4 h-50 h-lg-75">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body ">
+                  <p class="fw-bold card-text"><span class="fw-medium">Name: </span><%= user.Name%></p>
+                  <p class="card-text">Email: <span class="fw-medium"><%= user.Email%></span></p>                  
+                  <p class="card-text">About: <span class="fw-medium"><%= user.About%></span></p>                  
+                  <p class="card-text"><small class="text-body-secondary">Joined <%=user.Date%></small></p>
+                  <a class="btn btn-primary" style="margin-top: 3%;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Edit profile</a>
+
+                  <!--Toggle starts here-->            
+                  <div class="offcanvas offcanvas-end bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                    <div class="offcanvas-header bg-danger">
+                      <h5 class="offcanvas-title text-white" id="offcanvasScrollingLabel">Edit Profile</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <form action="/update-profile" class="p-4 p-md-4 border rounded-3 bg-light" method="post">                            
+                            <div class="mb-3 input-group-sm">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="floatingInputName" placeholder="What would you like to be called?" name="name" value="<%= user.Name%>" required> 
+                            </div>                                                                                
+                            <div class="mb-3 input-group-sm">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="floatingInputEmail" name="email" value="<%= user.Email%>" readonly>      
+                            </div>                                                                                
+                            <div class="mb-3 input-group-sm">
+                                <label for="about">About</label>
+                                <input type="text" class="form-control" id="floatingInputRole" placeholder="Tell us about yourself" name="about" value="<%= user.About%>"> 
+                            </div>         
+                            <button type="submit" class="btn btn-primary">Update</button>                                                                        
+                        </form>
+                    </div>
+                  </div>
+                  <!--Toggle ends here-->
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <h4 class="text-center mt-5 mb-3">Your Activity</h4>
+        <div class="row w-75 mx-auto">            
+            <div class="container d-flex justify-content-center mb-3">
+                <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
+                    <label class="btn btn-outline-primary shadow-none" for="btncheck1">Questions</label>
+                    <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                    <label class="btn btn-outline-primary shadow-none" for="btncheck2">Answers</label>                    
+                </div>
+            </div>
+              <div class="container vh-100">
+                <div class="row collapse mb-5" id="collapseExample1">
+                    <div class="card card-body bg-light">
+                        <h1 class="text-center">Questions</h1>
+                        <% if(!questions[0]) {%>                            
+                            <h6 class="text-center">You haven't asked anything <a href="/ask">Ask here</a></h6>
+                        <%}%>
+                        <% questions.forEach(question=>{ %>
+                        <div class="card container shadow" style="margin-bottom: 3%; ">
+                            <div class="card-body">
+                                <button class="btn ps-0"><%=question.Date%></button>
+                                <h5 class="card-title text-truncate mw-75 mb-3"><%=question.question%></h5>                                                            
+                                <a href="/delete-question/<%=question.q_id%>/<%=session.u_id%>" class="btn btn-danger">Delete question</a>                              
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                  </div>
+                  <div class="row collapse mb-5" id="collapseExample2">
+                    <div class="card card-body bg-light mb-3">
+                        <h1 class="text-center">Answers</h1>
+                        <% if(!posts[0]) {%>                            
+                            <h6 class="text-center">You haven't given reply to any question yet <a href="/answer">See questions</a></h6>
+                        <%}%>
+                        <% posts.forEach(post=>{ %>
+                        <div class="card container shadow" style="margin-bottom: 3%; ">
+                            <div class="card-body">
+                                <button class="btn ps-0"><%=post.Date%></button>      
+                              <h5 class="card-title text-truncate mw-75"><%=post.question%></h5>
+                              <p class="text-truncate mw-75"><%=post.answer%></p>
+                              <a href="#" class="btn btn-primary">View post</a>
+                              <a href="/delete-post/<%=post.p_id%>/<%=session.u_id%>" class="btn btn-danger">Delete post</a>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                  </div>
+              </div>                    
+        </div>
+    </div>
+</div>
