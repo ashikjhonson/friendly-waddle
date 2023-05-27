@@ -147,9 +147,9 @@ app.get('/new-post', isAuthenticated, async (req, res)=>{
         res.redirect('/');
     }    
 })
-app.post('/new-post', isAuthenticated, (req, res)=>{
-    let query = 'INSERT INTO posts(question, answer, u_id, q_id, name) VALUES (?,?,?,?,?)';
-    executeInsertQuery(query, [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name])
+app.post('/new-post', isAuthenticated, async (req, res)=>{
+    const about = await executeInsertQuery('SELECT About FROM users WHERE u_id=?', [req.session.u_id]);    
+    executeInsertQuery('INSERT INTO posts(question, answer, u_id, q_id, name, About) VALUES (?,?,?,?,?,?)', [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name, about[0].About])
     .then(async  ()=>{        
         await executeInsertQuery('UPDATE questions SET answered=? WHERE q_id=?',[1, req.session.q_id]);
         console.log('Posted successfully');
@@ -214,7 +214,7 @@ app.get('/delete-post/:p_id/:u_id', isAuthenticated, async(req, res)=>{
     }
 })
 
-// Modified route to profile instead of home here
+
 app.get('/login', isNotAuthenticated, (req, res)=>{
     res.render('login');
 });
@@ -230,7 +230,7 @@ app.post('/login', async (req, res)=>{
                 req.session.email = found[0].Email;
                 req.session.u_id = found[0].u_id;
                 console.log('Logged in...');
-                res.redirect('/profile')
+                res.redirect('/')
             }
             else{
                 console.log('Incorrect password...');
