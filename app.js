@@ -170,6 +170,11 @@ app.get('/following', isAuthenticated, (req, res)=>{
     res.render('404', {session: req.session});
 })
 
+app.get('/guidelines', isAuthenticated, (req, res)=>{
+    req.session.active = 'notifications';
+    res.render('guidelines', {session: req.session});
+})
+
 
 app.get('/notifications', isAuthenticated, (req, res)=>{
     req.session.active = 'notifications';
