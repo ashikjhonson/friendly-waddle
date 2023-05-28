@@ -1,5 +1,41 @@
 <%- include('navbar'); -%>
 
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const likesDiv = document.querySelector('.likes');  
+    const heartIcon = likesDiv.querySelector('.bi-heart-fill');
+    const countSpan = likesDiv.querySelector('.count');
+
+    heartIcon.addEventListener('click', () => {  
+      if (heartIcon.classList.contains('liked')) {    
+        countSpan.innerText = parseInt(countSpan.innerText) + 1;
+      } else {    
+        countSpan.innerText = parseInt(countSpan.innerText) - 1;
+      }
+    });
+  });
+  function likeToggle(love){
+    love.classList.toggle('liked');
+    const action = love.classList.contains('liked') ? 'lp_id' : 'dp_id';
+    const url = "/update-likes?"+action+"="+love.id;    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    })
+    // likes = Number(document.getElementById("count-"+love.id).innerText);
+    // if(action=='lp_id'){          
+    //     document.getElementById('likes-count').innerText = likes+1;    
+    // }
+    // else {
+    //   document.getElementById('likes-count').innerText = likes-1;
+    // }
+  }
+</script>
+
 <div class="bg-light pt-4">
     <div class="container mb-5">
         <div class="row">
@@ -46,13 +82,15 @@
                 <div class="post d-flex flex-column py-2 mb-3 bg-white">
                   <div class="container">
                     <div class="post-title pt-2">
-                      <div class="d-flex profile container">                          
+                      <a title="Click to view profile" href="/users/<%=post.name%>/<%=post.u_id%>">
+                        <div class="d-flex profile container">                          
                           <svg xmlns="http://www.w3.org/2000/svg" fill="grey" height="50" viewBox="0 96 960 960" width="48"><path d="M222 801q63-44 125-67.5T480 710q71 0 133.5 23.5T739 801q44-54 62.5-109T820 576q0-145-97.5-242.5T480 236q-145 0-242.5 97.5T140 576q0 61 19 116t63 109Zm257.814-195Q422 606 382.5 566.314q-39.5-39.686-39.5-97.5t39.686-97.314q39.686-39.5 97.5-39.5t97.314 39.686q39.5 39.686 39.5 97.5T577.314 566.5q-39.686 39.5-97.5 39.5Zm.654 370Q398 976 325 944.5q-73-31.5-127.5-86t-86-127.266Q80 658.468 80 575.734T111.5 420.5q31.5-72.5 86-127t127.266-86q72.766-31.5 155.5-31.5T635.5 207.5q72.5 31.5 127 86t86 127.032q31.5 72.532 31.5 155T848.5 731q-31.5 73-86 127.5t-127.032 86q-72.532 31.5-155 31.5ZM480 916q55 0 107.5-16T691 844q-51-36-104-55t-107-19q-54 0-107 19t-104 55q51 40 103.5 56T480 916Zm0-370q34 0 55.5-21.5T557 469q0-34-21.5-55.5T480 392q-34 0-55.5 21.5T403 469q0 34 21.5 55.5T480 546Zm0-77Zm0 374Z"/></svg>
                           <div class="post-author ps-2">
-                            <span class="fw-bold d-block"><!--user--><%=post.name%></span>
+                            <span class="fw-bold d-block text-black"><!--user--><%=post.name%></span>
                             <span class="about-author d-inline-block text-secondary"><!--user about--><%=post.About%></span>
                           </div>                          
-                      </div>
+                        </div>
+                      </a>
                     </div> 
                     <div class="post-body pt-2 px-3">
                       <div class="question">
@@ -68,15 +106,9 @@
                     </div> -->
                   
                     <div class="post-footer pt-3 px-2 d-flex">                  
-                        <div class="likes d-flex py-2">
-                          <div class="like px-4">
-                            <a href=""><svg xmlns="http://www.w3.org/2000/svg" height="20" fill="blue" viewBox="0 96 960 960"><path d="M716 936H272V424l278-288 39 31q6 5 9 14t3 22v10l-45 211h299q24 0 42 18t18 42v81.839q0 7.161 1.5 14.661T915 595L789 885q-8.878 21.25-29.595 36.125Q738.689 936 716 936Zm-384-60h397l126-299v-93H482l53-249-203 214v427Zm0-427v427-427Zm-60-25v60H139v392h133v60H79V424h193Z"/></svg></a>
-                            <span class="count"><!--Like count--><%=post.likes%></span>
-                          </div>
-                          <div class="dislike">
-                            <a href=""><svg xmlns="http://www.w3.org/2000/svg" height="20" fill="currentColor" viewBox="0 96 960 960"><path d="M242 216h444v512l-278 288-39-31q-6-5-9-14t-3-22v-10l45-211H103q-24 0-42-18t-18-42v-81.839Q43 579 41.5 571.5T43 557l126-290q8.878-21.25 29.595-36.125Q219.311 216 242 216Zm384 60H229L103 575v93h373l-53 249 203-214V276Zm0 427V276v427Zm60 25v-60h133V276H686v-60h193v512H686Z"/></svg></a>
-                            <span class="count"><!--Dislike count--><%=post.dislikes%></span>
-                          </div>
+                        <div class="likes d-flex ps-5">
+                          <i class="bi pt-2 fs-5 bi-heart-fill <%= post.is_liked=='1'?'liked':''%>" id=<%= post.p_id %> onclick=likeToggle(this)></i>                          
+                          <span class="count ps-2 pt-2"><%=post.likes%></span>
                         </div>
                         <div class="comments ps-5 py-2">
                           <a href="/posts-view-post-<%= post.p_id %>"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 96 960 960" height="25" fill="currentColor"><path d="M340 996V775h-10q-106 0-178-76.5T80 516q0-109 75.5-184.5T340 256h53l-77-78 42-42 150 150-150 150-42-42 77-78h-53q-83 0-141.5 58.5T140 516q0 82 54.5 141T330 716h70v135l136-135h85q83 0 141-58.5T820 515q0-83-58.5-141T620 316h-53v-60h53q108 0 184 75.5T880 515q0 109-75.5 185T621 776h-60L340 996Z"/></svg></a>

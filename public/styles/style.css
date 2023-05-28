@@ -88,17 +88,16 @@ a{
 .btn:focus,.btn:active {
     outline: none !important;
     box-shadow: none;
-}
-  
-  @media (max-width: 768px) {
-    .date {
-      position: relative;
-      top: 0;
-      right: 0;
-      margin-bottom: 10px; /* Add some space below the date */
-    }
-  }
+}  
 
+i:hover{
+    cursor: pointer;
+}
+
+.liked{
+    color: red;
+    transition: color .1s;    
+}
   /* For later versions dark mode
   @include color-mode(dark) {
     // CSS variable overrides here...

@@ -82,11 +82,12 @@ const executeInsertQuery = (query, values) => {
 app.get('/', isAuthenticated, async (req, res)=>{          
     try{
         const trending = await executeQuery('SELECT * FROM trending');
-        const posts = await executeQuery('SELECT * FROM posts ORDER BY created_at DESC LIMIT 10');
+        const posts = await executeInsertQuery('SELECT p.*, CASE WHEN l.p_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked FROM posts p LEFT JOIN likes l ON p.p_id = l.p_id AND l.u_id = ? ORDER BY p.created_at DESC LIMIT 10', [req.session.u_id]);                
         req.session.active = 'home';
         res.render('index', {trending: trending, posts: posts, session: req.session});
     }
-    catch{
+    catch(e){
+        console.log(e);
         res.status(500).send('Error');
     }    
 });
@@ -187,7 +188,24 @@ app.get('/profile', isAuthenticated, async (req, res)=>{
 
 app.get('/posts-view-post-:pid', async (req, res)=>{
     const post = await executeInsertQuery('SELECT * FROM posts WHERE p_id=?',[req.params.pid]);        
-    res.render('post', {session: req.session, post: post[0]})
+    if(post[0])
+        res.render('post', {session: req.session, post: post[0]})
+    else
+        res.redirect('/');
+})
+
+
+app.get('/users/:name/:u_id', async (req, res)=>{
+
+    const user = await executeInsertQuery('SELECT Name, Email, About, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM users WHERE u_id=?', [req.params.u_id]);
+    const questions = await executeInsertQuery('SELECT q_id, question, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM questions WHERE u_id=? ORDER BY Date DESC', [req.params.u_id]);
+    const posts = await executeInsertQuery('SELECT p_id, question, answer, q_id, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM posts WHERE u_id=? ORDER BY Date DESC', [req.params.u_id]);
+    if(user[0]){
+        res.render('user', {session: req.session, user: user[0], questions: questions, posts: posts});
+    }
+    else{
+        res.redirect('/');
+    }
 })
 
 
@@ -221,6 +239,31 @@ app.get('/delete-post/:p_id/:u_id', isAuthenticated, async(req, res)=>{
     }
 })
 
+/**Complete like setup */
+app.post('/update-likes', isAuthenticated, async(req, res)=>{        
+    try{
+        const action = req.query.hasOwnProperty('lp_id')? 'like':'dislike';    
+        if(action=='like'){
+            await executeInsertQuery("INSERT INTO likes(p_id, u_id) SELECT ?, ? WHERE NOT EXISTS( SELECT 1 FROM likes WHERE p_id=? AND u_id=?)", [req.query.lp_id, req.session.u_id, req.query.lp_id, req.session.u_id])
+            .then(async()=>{
+                await executeInsertQuery("UPDATE posts SET likes = (SELECT COUNT(*) FROM likes WHERE p_id=?) WHERE p_id=?", [req.query.lp_id, req.query.lp_id]);
+                console.log('Liked');
+                res.sendStatus(200);
+            })        
+        }
+        else{
+            await executeInsertQuery("DELETE FROM likes WHERE p_id=? AND u_id=?", [req.query.dp_id, req.session.u_id])
+            .then(async()=>{
+                await executeInsertQuery("UPDATE posts SET likes = likes - 1 WHERE p_id=?", [req.query.dp_id]);
+                console.log('Disiked');
+                res.sendStatus(204);
+            })
+        }
+    }
+    catch{
+        res.sendStatus(500);
+    }
+})
 
 app.get('/login', isNotAuthenticated, (req, res)=>{
     res.render('login');
