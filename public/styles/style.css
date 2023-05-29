@@ -90,8 +90,18 @@ a{
     box-shadow: none;
 }  
 
+i {
+    font-style: normal;
+    font-size: 20px;
+}
+
 i:hover{
     cursor: pointer;
+}
+
+i::before{
+    padding-right: 10px;
+    font-size: 23px;
 }
 
 .liked{

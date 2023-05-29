@@ -192,11 +192,23 @@ app.get('/profile', isAuthenticated, async (req, res)=>{
 
 
 app.get('/posts-view-post-:pid', async (req, res)=>{
-    const post = await executeInsertQuery('SELECT * FROM posts WHERE p_id=?',[req.params.pid]);        
+    const post = req.session.u_id? await executeInsertQuery('SELECT p.*, CASE WHEN l.p_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked FROM posts p LEFT JOIN likes l ON p.p_id = l.p_id AND l.u_id = ? WHERE p.p_id = ?',[req.session.u_id, req.params.pid]): await executeInsertQuery('SELECT * FROM posts WHERE p_id=?',[req.params.pid]);
+    const comments = await executeInsertQuery('SELECT * FROM comments WHERE post_id=?',[req.params.pid]);
     if(post[0])
-        res.render('post', {session: req.session, post: post[0]})
+        res.render('post', {session: req.session, post: post[0], comments: comments})
     else
         res.redirect('/');
+})
+
+app.post('/new-comment', isAuthenticated, async (req, res)=>{
+    try{                
+        await executeInsertQuery('INSERT INTO comments(post_id, comment, user_id, name) VALUES (?,?,?,?)', [req.query.p_id, req.body.reply, req.session.u_id, req.session.name]);
+        console.log('Added new comment');
+        res.redirect('/posts-view-post-'+p_id);
+    }
+    catch{
+        res.sendStatus(500);
+    }
 })
 
 
@@ -246,7 +258,7 @@ app.get('/delete-post/:p_id/:u_id', isAuthenticated, async(req, res)=>{
 
 /**Complete like setup */
 app.post('/update-likes', isAuthenticated, async(req, res)=>{        
-    try{
+    try{        
         const action = req.query.hasOwnProperty('lp_id')? 'like':'dislike';    
         if(action=='like'){
             await executeInsertQuery("INSERT INTO likes(p_id, u_id) SELECT ?, ? WHERE NOT EXISTS( SELECT 1 FROM likes WHERE p_id=? AND u_id=?)", [req.query.lp_id, req.session.u_id, req.query.lp_id, req.session.u_id])
