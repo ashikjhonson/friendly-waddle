@@ -202,7 +202,8 @@ app.get('/posts-view-post-:pid', async (req, res)=>{
 
 app.post('/new-comment', isAuthenticated, async (req, res)=>{
     try{                
-        await executeInsertQuery('INSERT INTO comments(post_id, comment, user_id, name) VALUES (?,?,?,?)', [req.query.p_id, req.body.reply, req.session.u_id, req.session.name]);
+        const p_id = req.query.p_id;
+        await executeInsertQuery('INSERT INTO comments(post_id, comment, user_id, name) VALUES (?,?,?,?)', [p_id, req.body.reply, req.session.u_id, req.session.name]);
         console.log('Added new comment');
         res.redirect('/posts-view-post-'+p_id);
     }
