@@ -17,6 +17,15 @@
             </div>
             <div class="col-md-10 mx-auto col-lg-5">
                 <form class="p-4 p-md-4 border rounded-3 bg-light" method="post">
+                    <% if (flashMessage && flashMessage.length > 0) { %>
+                        <div class="mx-auto" id="flash-message">
+                          <div class="alert alert-danger alert-dismissible fade show row p-2" role="alert">        
+                              <div class="container text-center text-danger">
+                                <%= flashMessage %>                                
+                              </div>
+                          </div>      
+                        </div>
+                      <% } %>
                 <div class="text-center pb-3"><h3 style="color: #005EB8;">Sign Up</h3></div>
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="floatingInputName" placeholder="What would you like to be called?" name="name" required>

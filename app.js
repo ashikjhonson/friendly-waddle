@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session')
+const flash = require('connect-flash')
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
@@ -11,6 +12,7 @@ const app = express();
 const port = 3000;
 
 app.set('view engine', 'ejs');
+app.use(flash())
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
@@ -80,11 +82,10 @@ const executeInsertQuery = (query, values) => {
 
 // Routes
 app.get('/', isAuthenticated, async (req, res)=>{          
-    try{
-        const trending = await executeQuery('SELECT * FROM trending');
+    try{        
         const posts = await executeInsertQuery('SELECT p.*, CASE WHEN l.p_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked FROM posts p LEFT JOIN likes l ON p.p_id = l.p_id AND l.u_id = ? ORDER BY p.created_at DESC LIMIT 10', [req.session.u_id]);                
         req.session.active = 'home';
-        res.render('index', {trending: trending, posts: posts, session: req.session});
+        res.render('index', {posts: posts, session: req.session, flashMessage: req.flash('info')});
     }
     catch(e){
         console.log(e);
@@ -104,11 +105,11 @@ app.post('/ask', (req, res)=>{
     if(question){
         try{                        
             executeInsertQuery('INSERT INTO questions (question, u_id, name) VALUES(?,?,?)', [question, req.session.u_id, req.session.name]);
-            console.log('Question added');
-            res.redirect('/');
+            req.flash('info', 'Added question')            
         } catch{
-            console.log('Error');
+            req.flash('info', 'Error while adding question')            
         }
+        res.redirect('/');
     }    
     else{
         res.redirect('/ask')
@@ -117,26 +118,18 @@ app.post('/ask', (req, res)=>{
 
 
 app.get('/answer', isAuthenticated, async (req, res)=>{
-    const questions = await executeQuery('SELECT * FROM questions ORDER BY answered, created_at LIMIT 4');
+    const questions = await executeQuery("SELECT q.*, DATE_FORMAT(q.created_at, '%d-%m-%Y') AS date FROM questions q ORDER BY q.answered, q.created_at LIMIT 5");
     req.session.active = 'answer';
-    res.render('questions', {questions: questions, session: req.session});    
-});
-app.post('/answer', isAuthenticated,(req, res)=>{
-    req.session.q_id = req.body.listGroupRadio;    
-    if(req.session.q_id){
-        res.redirect('/new-post');
-    }
-    else{
-        res.redirect('/answer');
-    }
-})  
+    res.render('questions', {questions: questions, session: req.session, flashMessage: req.flash('info')});    
+});  
 
 
-app.get('/new-post', isAuthenticated, async (req, res)=>{    
+app.get('/new-post', isAuthenticated, async (req, res)=>{        
     try{
-        if(req.session.q_id){
-            const qn = await executeInsertQuery('SELECT question FROM questions WHERE q_id=?',[req.session.q_id]);
+        if(req.query.q_id){
+            const qn = await executeInsertQuery('SELECT question FROM questions WHERE q_id=?',[req.query.q_id]);
             req.session.question = qn[0].question;        
+            req.session.q_id = req.query.q_id;
             res.render('new-post', {session: req.session});
         }
         else{
@@ -150,24 +143,25 @@ app.get('/new-post', isAuthenticated, async (req, res)=>{
 })
 app.post('/new-post', isAuthenticated, async (req, res)=>{
     const about = await executeInsertQuery('SELECT About FROM users WHERE u_id=?', [req.session.u_id]);    
-    executeInsertQuery('INSERT INTO posts(question, answer, u_id, q_id, name, About) VALUES (?,?,?,?,?,?)', [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name, about[0].About])
+    await executeInsertQuery('INSERT INTO posts(question, answer, u_id, q_id, name, About) VALUES (?,?,?,?,?,?)', [req.session.question, req.body.answer, req.session.u_id, req.session.q_id, req.session.name, about[0].About])
     .then(async  ()=>{        
-        await executeInsertQuery('UPDATE questions SET answered=? WHERE q_id=?',[1, req.session.q_id]);
-        console.log('Posted successfully');
+        await executeInsertQuery('UPDATE questions SET answered=?, replies = replies+1 WHERE q_id=?',[1, req.session.q_id]);
+        req.flash('info', 'Posted sucessfully')
         delete req.session.question;
         delete req.session.q_id;
         res.redirect('/');
     })
-    .catch( err=>{
-        console.log("Couldn't post");
+    .catch( err=>{        
+        req.flash('info', "Couldn't post")
         res.redirect('/new-post');
     })  
 })
 
 
-app.get('/following', isAuthenticated, (req, res)=>{
+app.get('/following', isAuthenticated, async(req, res)=>{
     req.session.active = 'following';
-    res.render('404', {session: req.session});
+    const waddles = await executeQuery('SELECT * FROM users');
+    res.render('users', {session: req.session, waddles: waddles});
 })
 
 app.get('/guidelines', isAuthenticated, (req, res)=>{
@@ -186,25 +180,35 @@ app.get('/profile', isAuthenticated, async (req, res)=>{
     const user = await executeInsertQuery('SELECT Name, Email, About, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM users WHERE u_id=?', [req.session.u_id]);
     const questions = await executeInsertQuery('SELECT q_id, question, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM questions WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
     const posts = await executeInsertQuery('SELECT p_id, question, answer, q_id, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM posts WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
-
-    res.render('profile', {session: req.session, user: user[0], questions: questions, posts: posts});
+    const likes = await executeInsertQuery('SELECT SUM(likes) AS t_likes FROM posts WHERE u_id=?', [req.session.u_id]);    
+    res.render('profile', {session: req.session, user: user[0], questions: questions, posts: posts, flashMessage: req.flash('info'), likes: likes});
 })
 
 
 app.get('/posts-view-post-:pid', async (req, res)=>{
     const post = req.session.u_id? await executeInsertQuery('SELECT p.*, CASE WHEN l.p_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked FROM posts p LEFT JOIN likes l ON p.p_id = l.p_id AND l.u_id = ? WHERE p.p_id = ?',[req.session.u_id, req.params.pid]): await executeInsertQuery('SELECT * FROM posts WHERE p_id=?',[req.params.pid]);
-    const comments = await executeInsertQuery('SELECT * FROM comments WHERE post_id=?',[req.params.pid]);
+    const comments = await executeInsertQuery("SELECT c.*, DATE_FORMAT(c.created_at, '%d-%m-%Y') AS date FROM comments c WHERE c.post_id=?",[req.params.pid]);
     if(post[0])
-        res.render('post', {session: req.session, post: post[0], comments: comments})
+        res.render('post', {session: req.session, post: post[0], comments: comments, flashMessage: req.flash('info')}) 
     else
         res.redirect('/');
+})
+
+app.get('/questions-view-question-:qid', async (req, res)=>{
+    const ans = await executeInsertQuery('SELECT * FROM posts WHERE q_id=? ORDER BY likes desc', [req.params.qid]);
+    if(ans[0])
+        res.render('question', {session: req.session, ans: ans})
+    else{
+        req.flash('info', 'No answers yet!!!');
+        res.redirect('/answer')
+    }        
 })
 
 app.post('/new-comment', isAuthenticated, async (req, res)=>{
     try{                
         const p_id = req.query.p_id;
         await executeInsertQuery('INSERT INTO comments(post_id, comment, user_id, name) VALUES (?,?,?,?)', [p_id, req.body.reply, req.session.u_id, req.session.name]);
-        console.log('Added new comment');
+        req.flash('info', 'Added your reply');
         res.redirect('/posts-view-post-'+p_id);
     }
     catch{
@@ -218,8 +222,9 @@ app.get('/users/:name/:u_id', async (req, res)=>{
     const user = await executeInsertQuery('SELECT Name, Email, About, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM users WHERE u_id=?', [req.params.u_id]);
     const questions = await executeInsertQuery('SELECT q_id, question, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM questions WHERE u_id=? ORDER BY Date DESC', [req.params.u_id]);
     const posts = await executeInsertQuery('SELECT p_id, question, answer, q_id, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM posts WHERE u_id=? ORDER BY Date DESC', [req.params.u_id]);
+    const likes = await executeInsertQuery('SELECT SUM(likes) AS t_likes FROM posts WHERE u_id=?', [req.params.u_id]);
     if(user[0]){
-        res.render('user', {session: req.session, user: user[0], questions: questions, posts: posts});
+        res.render('user', {session: req.session, user: user[0], questions: questions, posts: posts, likes: likes});
     }
     else{
         res.redirect('/');
@@ -231,26 +236,28 @@ app.post('/update-profile', isAuthenticated, async(req, res)=>{
     await executeInsertQuery('UPDATE posts SET name=?, About=? WHERE u_id=?',[req.body.name, req.body.about, req.session.u_id]);
     await executeInsertQuery('UPDATE questions SET name=? WHERE u_id=?',[req.body.name, req.session.u_id]);
     await executeInsertQuery('UPDATE users SET Name=?, About=? WHERE Email=?', [req.body.name, req.body.about, req.body.email]);
-    console.log('Updated');
+    req.flash('info', 'Profile updated successfully')
     res.redirect('/profile');
 })
 
 
 app.get('/delete-question/:q_id/:u_id', isAuthenticated, async(req, res)=>{
-    if(req.params.u_id==req.session.u_id){
+    try {           
+        console.log(req.params.q_id);
         await executeInsertQuery('DELETE FROM posts WHERE q_id=?',[req.params.q_id]);
         await executeInsertQuery('DELETE FROM questions WHERE q_id=?',[req.params.q_id]);
-        console.log('Deleted question');
+        req.flash('info', 'Deleted question')
         res.redirect('/profile');
-    }else{
+    } catch (error) {
         res.redirect('/');
     }
 })
 
 app.get('/delete-post/:p_id/:u_id', isAuthenticated, async(req, res)=>{
-    if(req.params.u_id==req.session.u_id){
+    if(req.params.u_id==req.session.u_id){        
+        await executeInsertQuery('UPDATE questions SET answered = CASE WHEN (SELECT COUNT(*) FROM posts WHERE q_id = ?) = 0 THEN 0 ELSE answered END, replies = CASE WHEN replies > 0 THEN replies - 1 ELSE replies END WHERE q_id = ?;',[req.params.q_id, req.params.q_id]);
         await executeInsertQuery('DELETE FROM posts WHERE p_id=?',[req.params.p_id]);
-        console.log('Deleted post');
+        req.flash('info', 'Deleted post')
         res.redirect('/profile');
     }else{
         res.redirect('/');
@@ -283,8 +290,8 @@ app.post('/update-likes', isAuthenticated, async(req, res)=>{
     }
 })
 
-app.get('/login', isNotAuthenticated, (req, res)=>{
-    res.render('login');
+app.get('/login', isNotAuthenticated, (req, res)=>{    
+    res.render('login', {flashMessage: req.flash('info')});
 });
 app.post('/login', async (req, res)=>{
     const loginEmail = req.body.email;
@@ -297,11 +304,11 @@ app.post('/login', async (req, res)=>{
                 req.session.name = found[0].Name;
                 req.session.email = found[0].Email;
                 req.session.u_id = found[0].u_id;
-                console.log('Logged in...');
+                req.flash('info',"Greetings! We're thrilled to have you as part of our community.");
                 res.redirect('/')
             }
             else{
-                console.log('Incorrect password...');
+                req.flash('info', 'Incorrect password')
                 res.redirect('/login');
             }
         } 
@@ -311,14 +318,14 @@ app.post('/login', async (req, res)=>{
         }
     }
     else{
-        console.log('User not found...'); //no user found
+        req.flash('info', 'Incorrect email')
         res.redirect('/login');
     }
 })
 
 
 app.get('/register', isNotAuthenticated, (req, res)=>{
-    res.render('register');
+    res.render('register', {flashMessage: req.flash('info')});
 });
 app.post('/register', async (req, res)=>{
     try{
@@ -330,7 +337,7 @@ app.post('/register', async (req, res)=>{
         }
         const result = await executeInsertQuery("SELECT Email FROM users WHERE Email=?", [user.email]);
         if(result[0]){
-            console.log('User exists...');
+            req.flash('info', 'Email already in use')
             res.redirect('/register');
         }
         else{
@@ -340,8 +347,8 @@ app.post('/register', async (req, res)=>{
             req.session.name = user.name;
             req.session.email = user.email; 
             const result = await executeInsertQuery('SELECT u_id FROM users WHERE email=?', [user.email]);
-            req.session.u_id = result[0].u_id;
-            console.log('User registered...');                     
+            req.session.u_id = result[0].u_id;        
+            req.flash('info', "Welcome aboard! Start your journey with us.");
             res.redirect('/');
         }                  
     } catch(e){
@@ -351,9 +358,8 @@ app.post('/register', async (req, res)=>{
 })
 
 
-app.get('/logout', isAuthenticated, (req, res)=>{
-    req.session.destroy();
-    console.log('Logged out...');
+app.get('/logout', isAuthenticated, (req, res)=>{    
+    req.session.destroy();    
     res.redirect('/login');
 })
 

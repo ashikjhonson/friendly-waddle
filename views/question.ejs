@@ -1,0 +1,25 @@
+<%- include('navbar'); -%>
+<div class="bg-light pt-4">
+  <div class="container vh-100">
+    
+    <div class="col-8 mx-auto" >
+        <div class="card card-body bg-light border-0">   
+            <div class="container bg-white border border-2 border-secondary rounded shadow pt-3 px-3">
+                <h4 class="ms-1 mb-4"><span class="fw-light">Question:</span> <%=ans[0].question%></h4>
+                <h5 class="ms-1 fw-light">Answers (<%if(ans)%><%=ans.length%>): <a href="" class="icon-link icon-link-hover me-1 float-end">Give answer</a></h5>
+                <% ans.forEach(answer=>{ %>
+                  <div class="card container shadow pb-1" style="margin-bottom: 3%; ">
+                      <div class="card-body p-0 pb-1">                    
+                          <h5 class="card-title text-truncate mw-75 mt-2"><%=answer.answer%></h5>                                                                                                    
+                          <a href="/posts-view-post-<%= answer.p_id %>" class="fw-medium">View Answer</a>
+                          <span class="fw-lighter ps-3">Likes: <%=answer.likes%></span>
+                          <span class="fw-lighter px-5">Answered by: <a href="/users/<%=answer.name%>/<%=answer.u_id%>"><%=answer.name%></a></span>                    
+                      </div>
+                  </div>            
+                  <% }) %>
+            </div>
+        </div>
+      </div>
+    </div>
+
+</div>
