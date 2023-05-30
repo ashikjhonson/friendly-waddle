@@ -13,55 +13,63 @@ const conn = mysql.createConnection({
 const createDB = 'CREATE DATABASE IF NOT EXISTS '+process.env.DB_DATABASE;
 conn.query(createDB);
 
-const usersTable = `
+// users
+let table = `
 CREATE TABLE IF NOT EXISTS ${process.env.DB_DATABASE}.users (
   u_id INT NOT NULL AUTO_INCREMENT,
   Name VARCHAR(60) NOT NULL,
   Email VARCHAR(100) NOT NULL,
   Password VARCHAR(255) NOT NULL,
+  created_at timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  About varchar(255) DEFAULT NULL,
   PRIMARY KEY (u_id));`;
-conn.query(usersTable);
+conn.query(table);
 
-const questionsTable = `
+// questions
+table = `
 CREATE TABLE IF NOT EXISTS ${process.env.DB_DATABASE}.questions (
   q_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   question TEXT NOT NULL,
   u_id INT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   answered INT NOT NULL DEFAULT 0,
   name VARCHAR(60),
-  FOREIGN KEY (u_id) REFERENCES users(u_id)
+  replies int DEFAULT 0
 );`;
-conn.query(questionsTable);
+conn.query(table);
 
-const postsTable = `
+// posts
+table = `
 CREATE TABLE IF NOT EXISTS ${process.env.DB_DATABASE}.posts (
-  p_id INT AUTO_INCREMENT PRIMARY KEY,
+  p_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   question TEXT,
   answer TEXT,
-  u_id INT,
-  q_id INT,
+  u_id INT NOT NULL,
+  q_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   likes INT DEFAULT 0,
-  dislikes INT DEFAULT 0,
   name VARCHAR(60),
-  FOREIGN KEY (u_id) REFERENCES users(u_id),
-  FOREIGN KEY (q_id) REFERENCES questions(q_id));`;
-conn.query(postsTable);
+  About varchar(255) DEFAULT NULL)`;
+conn.query(table);
 
-const commentsTable = `
+// comments
+table = `
 CREATE TABLE IF NOT EXISTS ${process.env.DB_DATABASE}.comments (
   c_id INT AUTO_INCREMENT PRIMARY KEY,
-  post_id INT,
+  post_id INT NOT NULL,
   comment TEXT,
-  user_id INT,
+  user_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  likes INT DEFAULT 0,
-  dislikes INT DEFAULT 0,
-  name VARCHAR(60),
-  FOREIGN KEY (post_id) REFERENCES posts(p_id),
-  FOREIGN KEY (user_id) REFERENCES users(u_id));`;
-conn.query(commentsTable);
+  name VARCHAR(60));`;
+conn.query(table);
+
+// likes
+table = `
+CREATE TABLE IF NOT EXISTS ${process.env.DB_DATABASE}.likes (
+  p_id int NOT NULL,
+  u_id int NOT NULL
+)`;
+conn.query(table);
 
 console.log('Completed');
 

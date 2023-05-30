@@ -2,6 +2,15 @@
 
 <%- include('navbar'); -%>
 
-<div class="bg-light pt-4">
-    
+<div class="bg-light pt-4 vh-100">
+    <div class="container vh-100">
+        <h4 class="text-center mb-3">Friendly Waddles around here!</h4>
+        <div class="col-4 mx-auto rounded bg-secondary my-2">
+            <ul class="list-group list-group-flush rounded p-3 pb-2">  
+                <% waddles.forEach(user=>{ %>
+                    <li class="list-group-item mb-2 bg-secondary"><img src="/assets/male.svg" style="height: 40px; border: 1px solid black; border-radius: 50%;"><a href="/users/<%=user.Name%>/<%=user.u_id%>" class="text-white fw-bold ms-3 fs-5"><%=user.Name%></a></li> 
+                <%})%>
+            </ul>
+        </div>
+    </div>
 </div>

@@ -1,19 +1,37 @@
 <%- include('navbar'); -%>
+<script>
+  setTimeout(function() {
+    var flashMessage = document.getElementById('flash-message');
+    if (flashMessage) {
+      flashMessage.style.display = 'none';
+    }
+  }, 5000);
+</script>
 <div class="pt-4">
     <div class="container">  
+      <% if (flashMessage && flashMessage.length > 0) { %>
+        <div class="col-6 mx-auto" id="flash-message">
+          <div class="alert alert-primary alert-dismissible fade show row p-2" role="alert">        
+              <div class="container text-center">
+                <strong> <%= flashMessage %> </strong>            
+              </div>
+          </div>      
+        </div>
+      <% } %>
         <h3 class="text-center mb-3">Your Profile</h3>
-        <div class="card bg-light w-50 mb-3 border border-dark p-2 text-start custom-card mx-auto">
+        <div class="card bg-light col-7 w-50 mb-3 border border-dark p-2 text-start custom-card mx-auto">
             <div class="row">
               <div class="col-md-4">
                 <img src="/assets/male.svg" class="mt-5 ms-4 h-50 h-lg-75">
               </div>
-              <div class="col-md-8">
+              <div class="col-8">
                 <div class="card-body ">
                   <p class="fw-bold card-text"><span class="fw-medium">Name: </span><%= user.Name%></p>
                   <p class="card-text">Email: <span class="fw-medium"><%= user.Email%></span></p>                  
                   <p class="card-text">About: <span class="fw-medium"><%= user.About%></span></p>                  
                   <p class="card-text"><small class="text-body-secondary">Joined <%=user.Date%></small></p>
-                  <a class="btn btn-primary" style="margin-top: 3%;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Edit profile</a>
+                  <p><i class="bi bi-heart-fill liked"></i>Total Likes: <%=likes[0].t_likes%></p>
+                  <a class="btn btn-primary" style="margin-top: 3%;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Edit profile</a>                  
 
                   <!--Toggle starts here-->            
                   <div class="offcanvas offcanvas-end bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
@@ -35,7 +53,7 @@
                                 <label for="about">About</label>
                                 <input type="text" class="form-control" id="floatingInputRole" placeholder="Tell us about yourself" name="about" value="<%= user.About%>"> 
                             </div>         
-                            <button type="submit" class="btn btn-primary">Update</button>                                                                        
+                            <button type="submit" class="btn btn-primary">Update</button>                                                                      
                         </form>
                     </div>
                   </div>
@@ -45,9 +63,9 @@
             </div>
         </div>
 
-        <h4 class="text-center mt-5 mb-3">Your Activity</h4>
+        <h4 class="text-center mt-5 mb-3">Your Activity</h4>        
         <div class="row w-75 mx-auto">            
-            <div class="container d-flex justify-content-center mb-3">
+            <div class="container d-flex justify-content-center mb-2">
                 <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
                     <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
                     <label class="btn btn-outline-primary shadow-none" for="btncheck1">Questions</label>
@@ -55,10 +73,11 @@
                     <label class="btn btn-outline-primary shadow-none" for="btncheck2">Answers</label>                    
                 </div>
             </div>
-              <div class="container vh-100">
+            <span class="text-center mb-3">Click to view</span>
+              <div class="container vh-100 col-9">
                 <div class="row collapse mb-5" id="collapseExample1">
                     <div class="card card-body bg-light">
-                        <h1 class="text-center">Questions</h1>
+                        <h3 class="text-center">Questions</h3>
                         <% if(!questions[0]) {%>                            
                             <h6 class="text-center">You haven't asked anything <a href="/ask">Ask here</a></h6>
                         <%}%>
@@ -66,8 +85,8 @@
                         <div class="card container shadow" style="margin-bottom: 3%; ">
                             <div class="card-body">
                                 <button class="btn ps-0"><%=question.Date%></button>
-                                <h5 class="card-title text-truncate mw-75 mb-3"><%=question.question%></h5>                                                            
-                                <a href="/delete-question/<%=question.q_id%>/<%=session.u_id%>" class="btn btn-danger">Delete question</a>                              
+                                <a href="/questions-view-question-<%= question.q_id %>" class="fw-medium text-black"><h5 class="card-title text-truncate mw-75 mb-1"><%=question.question%></h5></a>
+                                <a href="/delete-question/<%=question.q_id%>/<%=session.u_id%>" class="btn btn-danger">Delete question</a>
                             </div>
                         </div>
                         <% }) %>
@@ -75,7 +94,7 @@
                   </div>
                   <div class="row collapse mb-5" id="collapseExample2">
                     <div class="card card-body bg-light mb-3">
-                        <h1 class="text-center">Answers</h1>
+                        <h3 class="text-center">Answers</h3>
                         <% if(!posts[0]) {%>                            
                             <h6 class="text-center">You haven't given reply to any question yet <a href="/answer">See questions</a></h6>
                         <%}%>
