@@ -1,0 +1,22 @@
+<%- include('navbar'); -%>
+<div class="bg-light">
+    <div class="container vh-100 col-8">
+        <div class="card card-body bg-light border-0">
+            <h4 class="text-center">Search results</h4>
+            <div class="add mt-4 mx-auto">
+                <% if(!matches[0]) {%>
+                    <h5>No matches found <a href="/ask">Ask here</a></h5>                    
+                <% } %>
+            </div>
+            <% matches.forEach(match=>{ %>
+                <div class="card container shadow pb-1" style="margin-bottom: 3%; ">
+                    <div class="card-body p-0 pb-1">                    
+                        <a  class="fw-medium text-black"><h5 class="card-title text-truncate mw-75 mt-2"><%=match.question%></h5></a>
+                        <a class="fw-medium" href="/questions-view-question-<%= match.q_id %>">View discussion</a>
+                        <span class="fw-lighter px-5">Asked by: <%=match.name%></a></span>                        
+                    </div>
+                </div>  
+            <% }) %>
+        </div>   
+    </div>
+</div>
