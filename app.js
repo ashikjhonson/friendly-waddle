@@ -164,7 +164,7 @@ app.get('/following', isAuthenticated, async(req, res)=>{
     res.render('users', {session: req.session, waddles: waddles});
 })
 
-app.get('/guidelines', isAuthenticated, (req, res)=>{
+app.get('/guidelines', (req, res)=>{
     req.session.active = 'notifications';
     res.render('guidelines', {session: req.session});
 })
@@ -180,7 +180,7 @@ app.get('/profile', isAuthenticated, async (req, res)=>{
     const user = await executeInsertQuery('SELECT Name, Email, About, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM users WHERE u_id=?', [req.session.u_id]);
     const questions = await executeInsertQuery('SELECT q_id, question, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM questions WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
     const posts = await executeInsertQuery('SELECT p_id, question, answer, q_id, DATE_FORMAT(created_at, "%d-%m-%Y") AS Date FROM posts WHERE u_id=? ORDER BY Date DESC', [req.session.u_id]);
-    const likes = await executeInsertQuery('SELECT SUM(likes) AS t_likes FROM posts WHERE u_id=?', [req.session.u_id]);    
+    const likes = await executeInsertQuery('SELECT SUM(likes) AS t_likes FROM posts WHERE u_id=?', [req.session.u_id]);        
     res.render('profile', {session: req.session, user: user[0], questions: questions, posts: posts, flashMessage: req.flash('info'), likes: likes});
 })
 
@@ -264,7 +264,7 @@ app.get('/delete-post/:p_id/:u_id', isAuthenticated, async(req, res)=>{
     }
 })
 
-/**Complete like setup */
+
 app.post('/update-likes', isAuthenticated, async(req, res)=>{        
     try{        
         const action = req.query.hasOwnProperty('lp_id')? 'like':'dislike';    
@@ -290,6 +290,13 @@ app.post('/update-likes', isAuthenticated, async(req, res)=>{
     }
 })
 
+
+app.post('/search', isAuthenticated, async(req, res)=>{    
+    const matchQuery = "SELECT * FROM questions WHERE question LIKE '%"+req.body.searchValue+"%' ORDER BY answered desc";
+    const matches = await executeQuery(matchQuery);    
+    res.render('search', {matches: matches, session: req.session});
+})
+
 app.get('/login', isNotAuthenticated, (req, res)=>{    
     res.render('login', {flashMessage: req.flash('info')});
 });
@@ -303,8 +310,7 @@ app.post('/login', async (req, res)=>{
                 req.session.loggedIn = true;
                 req.session.name = found[0].Name;
                 req.session.email = found[0].Email;
-                req.session.u_id = found[0].u_id;
-                req.flash('info',"Greetings! We're thrilled to have you as part of our community.");
+                req.session.u_id = found[0].u_id;                
                 res.redirect('/')
             }
             else{

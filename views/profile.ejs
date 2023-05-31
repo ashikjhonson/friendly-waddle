@@ -30,7 +30,7 @@
                   <p class="card-text">Email: <span class="fw-medium"><%= user.Email%></span></p>                  
                   <p class="card-text">About: <span class="fw-medium"><%= user.About%></span></p>                  
                   <p class="card-text"><small class="text-body-secondary">Joined <%=user.Date%></small></p>
-                  <p><i class="bi bi-heart-fill liked"></i>Total Likes: <%=likes[0].t_likes%></p>
+                  <p><i class="bi bi-heart-fill liked"></i>Total Likes: <%=likes[0].t_likes?likes[0].t_likes: 0%></p>
                   <a class="btn btn-primary" style="margin-top: 3%;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Edit profile</a>                  
 
                   <!--Toggle starts here-->            
