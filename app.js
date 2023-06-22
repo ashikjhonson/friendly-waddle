@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const MemoryStore = require('memorystore')(session);
 
 const app = express();
-const port = 3000;
+const port = 3301;
 
 app.set('view engine', 'ejs');
 app.use(flash())
@@ -243,7 +243,6 @@ app.post('/update-profile', isAuthenticated, async(req, res)=>{
 
 app.get('/delete-question/:q_id/:u_id', isAuthenticated, async(req, res)=>{
     try {           
-        console.log(req.params.q_id);
         await executeInsertQuery('DELETE FROM posts WHERE q_id=?',[req.params.q_id]);
         await executeInsertQuery('DELETE FROM questions WHERE q_id=?',[req.params.q_id]);
         req.flash('info', 'Deleted question')
@@ -271,16 +270,14 @@ app.post('/update-likes', isAuthenticated, async(req, res)=>{
         if(action=='like'){
             await executeInsertQuery("INSERT INTO likes(p_id, u_id) SELECT ?, ? WHERE NOT EXISTS( SELECT 1 FROM likes WHERE p_id=? AND u_id=?)", [req.query.lp_id, req.session.u_id, req.query.lp_id, req.session.u_id])
             .then(async()=>{
-                await executeInsertQuery("UPDATE posts SET likes = (SELECT COUNT(*) FROM likes WHERE p_id=?) WHERE p_id=?", [req.query.lp_id, req.query.lp_id]);
-                console.log('Liked');
+                await executeInsertQuery("UPDATE posts SET likes = (SELECT COUNT(*) FROM likes WHERE p_id=?) WHERE p_id=?", [req.query.lp_id, req.query.lp_id]);                
                 res.sendStatus(200);
             })        
         }
         else{
             await executeInsertQuery("DELETE FROM likes WHERE p_id=? AND u_id=?", [req.query.dp_id, req.session.u_id])
             .then(async()=>{
-                await executeInsertQuery("UPDATE posts SET likes = likes - 1 WHERE p_id=?", [req.query.dp_id]);
-                console.log('Disiked');
+                await executeInsertQuery("UPDATE posts SET likes = likes - 1 WHERE p_id=?", [req.query.dp_id]);                
                 res.sendStatus(204);
             })
         }

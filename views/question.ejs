@@ -6,7 +6,7 @@
         <div class="card card-body bg-light border-0">   
             <div class="container bg-white border border-2 border-secondary rounded shadow pt-3 px-3">
                 <h4 class="ms-1 mb-4"><span class="fw-light">Question:</span> <%=ans[0].question%></h4>
-                <h5 class="ms-1 fw-light">Answers (<%if(ans)%><%=ans.length%>): <a href="" class="icon-link icon-link-hover me-1 float-end">Give answer</a></h5>
+                <h5 class="ms-1 fw-light">Answers (<%if(ans)%><%=ans.length%>): <a href="/new-post?q_id=<%= ans[0].q_id %>" class="icon-link icon-link-hover me-1 float-end">Give answer</a></h5>
                 <% ans.forEach(answer=>{ %>
                   <div class="card container shadow pb-1" style="margin-bottom: 3%; ">
                       <div class="card-body p-0 pb-1">                    
